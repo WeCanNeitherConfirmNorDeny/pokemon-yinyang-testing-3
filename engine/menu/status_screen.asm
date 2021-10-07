@@ -287,7 +287,7 @@ PrintShinySymbol:
 
 PrintGenderStatusScreen: ; called on status screen
 	; get gender
-	;ld de, wLoadedMonDVs
+	; wGenderTemp = a = species
 	ld de, wLoadedMonGender
 	callba GetMonGender
 	ld a, [wGenderTemp]

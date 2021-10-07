@@ -1,50 +1,38 @@
-;; INPUTS - Mon DVs in de, species in wGenderTemp
-;; OUTPUT - Mon's gender in wGenderTemp
-;GetMonGender::
-;	ld hl, MonGenderRatios
-;	ld a, [wGenderTemp]
-;	dec a
-;	ld c, a
-;	ld b, 0
-;	add hl, bc ; hl now points to the species gender ratio
-;	
-;; Attack DV
-;	ld a, [de]
-;	and $f0
-;	ld b, a
-;; Speed DV
-;	inc de
-;	ld a, [de]
-;	and $f0
-;	swap a
-;; Put them together
-;	or b
-;	ld b, a ; b now has the combined DVs
-	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; INPUTS - Mon Gender in de, species in wGenderTemp
-; OUTPUT - Mon's gender in wGenderTemp
+; INPUTS -
+;	de = gender stat
+;	wGenderTemp = species
+; OUTPUT -
+;	wGenderTemp = Mon's gender
 GetMonGender::
+	ld hl, MonGenderRatios
+	ld a, [wGenderTemp]
+	dec a
+	ld c, a
+	ld b, 0
+	add hl, bc ; hl now points to the species gender ratio
+
 	ld a, [de]
-	ld b, a
+	ld b, a ; b == gender stat
 
 ; Get the gender ratio
 	ld a, [hl]
-	
+
 ; Check for always one or another
 	cp NO_GENDER
 	jr z, .genderless
-	
+
 	cp FEMALE_ONLY
 	jr z, .female
-	
+
 	and a ; MALE_ONLY
 	jr z, .male
-	
-; Compare the ratio to the value we found earlier
+
+; Else: compare the ratio to the value we found earlier
+; b == gender stat
+; a == one of:
 	cp b
 	jr c, .male
-	
 .female
 	ld a, FEMALE
 	jr .done
@@ -56,7 +44,7 @@ GetMonGender::
 .done
 	ld [wGenderTemp], a
 	ret
-	
+
 MonGenderRatios:
 	db MALE_88_PERCENT   ; Bulbasaur
 	db MALE_88_PERCENT   ; Ivysaur

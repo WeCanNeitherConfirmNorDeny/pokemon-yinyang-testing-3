@@ -6,7 +6,7 @@ flag_array: MACRO
 ENDM
 
 ;;;;;;;;;;;;;;;
-box_struct_length EQU (1*6) + (2*2) + (3*1) + (2*NUM_STATS) + (1*NUM_DVS) + (1*NUM_MOVES*2)
+box_struct_length EQU (1*7) + (2*2) + (3*1) + (2*NUM_STATS) + (1*NUM_DVS) + (1*NUM_MOVES*2)
 box_struct: MACRO
 \1Species::    db
 \1HP::         dw
@@ -49,6 +49,9 @@ enemy_struct: MACRO
 \1Speed::     dw
 \1Special::   dw
 \1PP::        ds 2 ; NUM_MOVES - 2
+\1BaseStats:: ds 5
+\1CatchRate:: ds 1
+\1BaseExp:: ds 1
 \1Gender::ds 1
 ENDM
 
@@ -102,6 +105,7 @@ battle_struct: MACRO
 \1Speed::      dw
 \1Special::    dw
 \1PP::         ds NUM_MOVES
+\1Nick:: ds NAME_LENGTH
 \1Gender::ds 1
 ENDM
 
@@ -1696,16 +1700,15 @@ wEnemyMonNick:: ds NAME_LENGTH ; cfda
 ;wEnemyMonSpeed::     dw
 ;wEnemyMonSpecial::   dw
 ;wEnemyMonPP::        ds 2 ; NUM_MOVES - 2
-wEnemyMon:: enemy_struct wEnemyMon ; cfe5
+wEnemyMon:: enemy_struct wEnemyMon ; cfe7
 
 ; SECTION "WRAM Bank 1", WRAMX, BANK[1]
-                     ds 2 ; NUM_MOVES - 2
+;                     ds 2 ; NUM_MOVES - 2
+;wEnemyMonBaseStats:: ds 5
+;wEnemyMonCatchRate:: ds 1
+;wEnemyMonBaseExp:: ds 1
 
-wEnemyMonBaseStats:: ds 5
-wEnemyMonCatchRate:: ds 1
-wEnemyMonBaseExp:: ds 1
-
-wBattleMonNick:: ds NAME_LENGTH ; d009
+;wBattleMonNick:: ds NAME_LENGTH ; d009
 wBattleMon:: battle_struct wBattleMon ; d014
 
 

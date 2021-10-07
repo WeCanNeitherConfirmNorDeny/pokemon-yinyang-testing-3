@@ -87,6 +87,17 @@ _AddPartyMon:
 	ld a, [hli]
 	ld b, [hl]
 	pop hl
+	;generate gender
+		push hl
+		push af
+		push bc
+		call Random
+		ld bc, wPartyMon1Gender - wPartyMon1
+		add hl, bc
+		ld [hl], a ; write
+		pop bc
+		pop af
+		pop hl
 	jr nz, .writeFreshMonData
 
 ; If the mon is being added to the player's party, update the pokedex.
@@ -134,16 +145,6 @@ _AddPartyMon:
 	call Random
 
 .writeFreshMonData
-	;generate gender
-		push hl
-		push af
-		call Random
-		ld hl, wPartyMon1Gender
-		ld [hl], a ; write
-		pop af
-		pop hl
-	; a = atk/def dvs
-	; b = spd/spc dvs
 	push bc
 	ld bc, wPartyMon1DVs - wPartyMon1
 	add hl, bc
