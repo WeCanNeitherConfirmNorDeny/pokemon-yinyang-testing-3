@@ -13,6 +13,7 @@ some features:
 to install and build:
  * download the master zip at the Red++ project ("https://github.com/TheFakeMateo/rpp-backup/archive/refs/heads/master.zip")
  * download the rgbds assembler tools
+ * download python 2.7 or install with cygwin
  * cygwin for make and bash or linux
  * make a folder for the red++ files and then copy my files over it
  * run make
