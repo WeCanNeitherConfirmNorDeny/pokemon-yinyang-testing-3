@@ -12,7 +12,13 @@ some features:
 
 to install and build:
  * download the master zip at the Red++ project ("https://github.com/TheFakeMateo/rpp-backup/archive/refs/heads/master.zip")
+ * as well as the files in the extras
  * download the rgbds assembler tools
  * cygwin for make, python 2.7 bash or linux
  * make a folder for the red++ files and then copy my files over it
  * run make
+
+ideas/todo:
+* easy mode will be easy
+* hard mode will be impossible
+* disable/remove all the music (maybe all the sound, i dont use it)
