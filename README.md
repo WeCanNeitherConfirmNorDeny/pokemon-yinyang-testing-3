@@ -7,7 +7,13 @@ a simple hack based on the red++ project (check it out at "https://github.com/th
 some features:
 
   * genders have their own stat added to the various '\_struct' macros (the effect is IV strength isn't determinged by sex)
+  * god items and mythic berries
   * a new berry :) the gold berry (makes your pokemon shiny)
+  * the ocean berry (gives your pokemon evs)
+  * enchanted mirror (fly map ins your pocket)
+  * snowglobe (randomly makes next wild shiny)
+  * better and shorter intro
+  * minor fixes
 
 
 to install and build:
@@ -22,3 +28,4 @@ ideas/todo:
 * easy mode will be easy
 * hard mode will be impossible
 * disable/remove all the music (maybe all the sound, i dont use it)
+* quests n shiii
