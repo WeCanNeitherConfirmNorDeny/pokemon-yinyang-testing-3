@@ -124,7 +124,10 @@ ItemUsePtrTable:
 	dw ItemUseMedicine   ; LUM_BERRY
 	dw ItemUseVitamin    ; ACAI_BERRY
 	dw ItemUseVitamin    ; GOLD_BERRY
-	; dw UnusableItem      ; GO_HOME
+	dw ItemUseVitamin    ; OCEAN_BERRY
+	dw UnusableItem      ; GO_HOME
+	dw ItemUseSnowglobe  ; SNOWGLOBE
+	dw ItemUseMirror     ; MIRROR
 
 ItemThiefBall:
 	ld a,[wIsInBattle]
@@ -920,13 +923,15 @@ ItemUseMedicine:
 	jr z,ItemUseMedicine ; if so, force another choice
 .checkItemType
 	ld a,[wcf91]
-	cp a,GOLD_BERRY
+	cp a,OCEAN_BERRY ; ocean berry
 	jp z,.useVitamin
-	cp a,ACAI_BERRY
+	cp a,GOLD_BERRY ; gold berry
 	jp z,.useVitamin
-	cp a,PECHA_BERRY
+	cp a,ACAI_BERRY ; acai berry
+	jp z,.useVitamin
+	cp a,PECHA_BERRY ; pecha berry
 	jp nc,.cureStatusAilment
-	cp a,ORAN_BERRY
+	cp a,ORAN_BERRY ; oran berry
 	jp nc,.healHP
 	cp a,REVIVE
 	jp nc,.healHP ; if it's a Revive or Max Revive
@@ -1363,7 +1368,9 @@ ItemUseMedicine:
 	cp a,ACAI_BERRY
 	jp z,.useRareCandy
 	cp a,GOLD_BERRY
-	jp z,.useGoldBerry
+	jp z,.useGoldBerry ; gold berry
+	cp a,OCEAN_BERRY
+	jp z,.useOceanBerry ; ocean berry
 	push hl
 	sub a,HP_UP
 	add a
@@ -1510,16 +1517,16 @@ ItemUseMedicine:
 	pop af
 	ld [wWhichPokemon],a
 	jp RemoveUsedItem
-.useGoldBerry
-	; XXX maybe these should work cp/ld on word sizes...
+;;;;;;;;;;;;;;;
+.useGoldBerry ; gold berry
 	push hl
 	ld bc, (wPartyMon1DVs - wPartyMon1) ; calc the offset to dvs
 	add hl, bc ; add offset to pointer
 	ld a,[hl] ; a = atk/def dv
 	cp a, ATKDEFDV_SHINY ; is atk/def dv == shiny dv ?Y
 	jr z, .useGoldBerryATKDEFEqualsShiny ; if so, check if the other dv is shiny
-	; cp a,ATKDEFDV_SHINY_FEMALE ; is atk/def dv == shiny female dv ?
-	; jr z,.useGoldBerryATKDEFEqualsShiny ; if so, check if the other dv is shiny
+	; cp a,ATKDEFDV_SHINY_FEMALE
+	; jr z,.useGoldBerryATKDEFEqualsShiny
 	jr .useGoldBerryCopyShinyDVs ; else, copy shiny dvs to our mon
 .useGoldBerryATKDEFEqualsShiny
 	inc hl
@@ -1537,9 +1544,80 @@ ItemUseMedicine:
 	ld [hl], a ; write spd/spc dv
 	ld a,SFX_SHOOTING_STAR
 	call PlaySound ; play sfx :)
-	pop hl
+	ld hl, useGoldBerryText
+	call PrintText
 	call GBPalWhiteOut ; fix/prevent screen glitch
+	pop hl
 	jp RemoveUsedItem
+;;;;;;;;;;;;;;;
+.useOceanBerry ; ocean berry
+	push hl
+	ld bc, (wPartyMon1HPExp - wPartyMon1) ; calc the offset to hp exp
+	add hl, bc ; add offset to pointer
+	push hl
+	ld a, [hli]
+	cp $ff
+	jr nz, .useOceanBerryCopyTopPercentEVs
+	ld a, [hli]
+	cp $ff
+	jr nz, .useOceanBerryCopyTopPercentEVs
+	ld a, [hli]
+	cp $ff
+	jr nz, .useOceanBerryCopyTopPercentEVs
+	ld a, [hli]
+	cp $ff
+	jr nz, .useOceanBerryCopyTopPercentEVs
+	ld a, [hli]
+	cp $ff
+	jr nz, .useOceanBerryCopyTopPercentEVs
+	ld a, [hli]
+	cp $ff
+	jr nz, .useOceanBerryCopyTopPercentEVs
+	ld a, [hli]
+	cp $ff
+	jr nz, .useOceanBerryCopyTopPercentEVs
+	ld a, [hli]
+	cp $ff
+	jr nz, .useOceanBerryCopyTopPercentEVs
+	ld a, [hli]
+	cp $ff
+	jr nz, .useOceanBerryCopyTopPercentEVs
+	ld a, [hl]
+	cp $ff
+	jr nz, .useOceanBerryCopyTopPercentEVs
+	; else fall through
+	; if we're here, every single byte == 0xff
+	pop hl ; fix stack
+	jp .vitaminNoEffect ; show no effect msg
+.useOceanBerryCopyTopPercentEVs
+	pop hl ; set pointer
+	ld a, $ff ; set source
+	; copy a 10x
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hl], a
+	; finish
+	ld a,SFX_SHOOTING_STAR
+	call PlaySound ; play sfx :)
+	ld hl, useOceanBerryText
+	call PrintText
+	;call GBPalWhiteOut ; fix/prevent screen glitch
+	pop hl
+	jp RemoveUsedItem
+
+useGoldBerryText:
+	TX_FAR _useGoldBerryText
+	db "@"
+useOceanBerryText:
+	TX_FAR _useOceanBerryText
+	db "@"
 
 VitaminStatRoseText:
 	TX_FAR _VitaminStatRoseText
@@ -2199,6 +2277,72 @@ ItemfinderFoundNothingText:
 	TX_FAR _ItemfinderFoundNothingText
 	db "@"
 
+ItemUseSnowglobe: ; snowglobe
+	ld a,[wIsInBattle]
+	and a
+	jp nz,ItemUseNotTime
+	call Random
+	ld hl, wExtraFlags
+	IF DEF(_HARD)
+		cp %00000011 ; 1,2,or 3 out of $ff (good luck lmao)
+		jr c,.lucky
+	ELSE
+		and a, %00000001 ; odd numbers (~ 50-50 chances)
+		jr z,.lucky
+	ENDC
+	; reset
+	res 0, [hl]
+	ld hl,useSnowglobeHotText
+	jr .noz
+	.lucky
+	; Force wild pokemon to be shiny
+	set 0, [hl]
+	ld hl,useSnowglobeIcyText
+	;
+	.noz
+	jp PrintText
+
+useSnowglobeIcyText:
+	TX_FAR _useSnowglobeIcyText
+	db "@"
+useSnowglobeHotText:
+	TX_FAR _useSnowglobeHotText
+	db "@"
+
+ItemUseMirror: ; mirror
+; brifly glitches
+	ld a,[wIsInBattle]
+	and a
+	jp nz,ItemUseNotTime
+	; show message
+	ld hl,useMirrorText
+	call PrintText
+	; open fly map with all zones active
+	push bc
+	ld hl, wKantoTownVisitedFlag
+	ld a, [hl+]
+	ld b, a
+	ld a, [hl-]
+	ld c, a
+	push bc
+	ld a, $ff
+	ld [hl+], a
+	ld [hl-], a
+	callba ChooseFlyDestination
+	; reset fly zones to how they were
+	pop bc
+	ld a, b
+	ld [hl+], a
+	ld a, c
+	ld [hl], a
+	pop bc
+	call GBPalWhiteOut
+	jp CloseStartMenu
+
+useMirrorText:
+	TX_FAR _useMirrorText
+	db "@"
+
 ItemUsePPUp:
 	ld a,[wIsInBattle]
 	and a
@@ -2430,7 +2574,6 @@ ItemUseTMHM:
 .printBootedUpMachineText
 	call PrintText
 	ld hl,TeachMachineMoveText
-	call PrintText
 	coord hl, 14, 7
 	lb bc, 8, 15
 	ld a,TWO_OPTION_MENU

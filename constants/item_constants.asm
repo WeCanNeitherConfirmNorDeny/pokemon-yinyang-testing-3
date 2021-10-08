@@ -119,9 +119,13 @@ const_value = 1
 	const LUM_BERRY     ; $6A
 	const ACAI_BERRY    ; $6B
 	const GOLD_BERRY    ; $6C
+	const OCEAN_BERRY   ; $6D
 
 ; Dummy item used for Ferry list
-	const GO_HOME       ; $6D
+	const GO_HOME       ; $6E
+
+	const SNOWGLOBE     ; $6F
+	const MIRROR        ; $70
 
 ; Don't call actual item scripts
 const_value = $C4

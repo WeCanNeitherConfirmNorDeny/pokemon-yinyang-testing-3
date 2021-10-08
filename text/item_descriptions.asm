@@ -643,19 +643,51 @@ _AcaiBerryDescription::
 	cont "1 when used."
 	prompt
 
-_GoldBerryDescription::
+_GoldBerryDescription:: ; gold berry
 	; What a hardcore item desc for a shinyizer ;)
 	; A mythical berry/ that is said to...
 	; Lift pokemon from/ their suffering.
 	text "A mythical berry"
-	line "that is said to..."
+	line "that is said to…"
 	
 	para "Lift #mon from"
 	line "their suffering."
 	prompt
 
+_OceanBerryDescription:: ; ocean berry
+	; A mythical berry/ that is said to...
+	; Endow pokemon with/ the fury of/ 10000 storms.
+	text "A mythical berry"
+	line "that is said to…"
+	
+	para "Endow #mon with"
+	line "the fury of"
+	cont "10000 storms."
+	prompt
+
 _GoHomeDescription::
 	text "Go home."
+	prompt
+
+_SnowglobeDescription:: ; snowglobe
+	; A mysterious/ snowglobe...
+	; A strange energy/ seems to come/ from it.
+	text "A mysterious"
+	line "snowglobe…"
+	
+	para "A strange energy"
+	line "seems to come"
+	cont "from it."
+	prompt
+
+_MirrorDescription:: ; mirror
+	; An enchanted/ mirror...
+	; It sometimes shows/ the future.
+	text "An enchanted"
+	line "mirror…"
+	
+	para "It sometimes shows"
+	line "the future."
 	prompt
 
 _HM01Description::
@@ -1417,7 +1449,7 @@ _CheriBerryDescription_Mart::
 
 _LumBerryDescription_Mart::
 	text "Cures #mon of"
-	line "status conditions"
+	line "status conditions."
 	done
 
 _AcaiBerryDescription_Mart::
@@ -1425,14 +1457,33 @@ _AcaiBerryDescription_Mart::
 	line "#mon by 1."
 	done
 
-_GoldBerryDescription_Mart::
+_GoldBerryDescription_Mart:: ; gold berry
 	; Lifts pokemon from/ their suffering.
 	text "Lifts #mon from"
 	line "their suffering."
 	done
 
+_OceanBerryDescription_Mart:: ; ocean berry
+	; Endows a pokemon/ with the fury of/ 10,000 storms.
+	text "Endows a #mon"
+	line "with the fury of"
+	cont "10,000 storms."
+	prompt
+
 _GoHomeDescription_Mart::
 	text "Go home."
+	done
+
+_SnowglobeDescription_Mart:: ; snowglobe
+	; Mysterious snowglobe.
+	text "Mysterious"
+	line "snowglobe"
+	done
+
+_MirrorDescription_Mart:: ; mirror
+	; Enchanted mirror
+	text "Enchanted"
+	line "mirror"
 	done
 
 _HM01Description_Mart::

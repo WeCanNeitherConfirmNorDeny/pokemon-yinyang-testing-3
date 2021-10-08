@@ -82,8 +82,19 @@ _GoldBerryText::
 	; A mythical berry/ that is said to...
 	; Lift pokemon from/ their suffering.
 	text "A mythical berry"
-	line "that is said to..."
+	line "that is said to…"
 
 	para "Lift #mon from"
 	line "their suffering."
+	prompt
+
+_OceanBerryText::
+	; A mythical berry/ that is said to...
+	; Endow pokemon with/ the fury of/ 10,000 storms.
+	text "A mythical berry"
+	line "that is said to…"
+	
+	para "Endow #mon with"
+	line "the fury of"
+	cont "10,000 storms."
 	prompt

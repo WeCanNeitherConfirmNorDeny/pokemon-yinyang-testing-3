@@ -520,6 +520,7 @@ UsableItems_PartyMenu:
 	db LUM_BERRY
 	db ACAI_BERRY
 	db GOLD_BERRY
+	db OCEAN_BERRY
 	db $ff
 
 ; items which close the item menu when used
@@ -530,6 +531,7 @@ UsableItems_CloseMenu:
 	db OLD_ROD
 	db GOOD_ROD
 	db SUPER_ROD
+	db MIRROR
 	db $ff
 
 StartMenu_TrainerInfo:

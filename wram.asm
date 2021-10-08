@@ -30,6 +30,8 @@ box_struct: MACRO
 ENDM
 
 ;;;;;;;;;;;;;;;
+; using dmg mapping along with other mods
+; have made the tagged addresses in some of these comments out of date
 enemy_struct: MACRO
 \1Species::   db
 \1HP::        dw
@@ -48,7 +50,7 @@ enemy_struct: MACRO
 \1Defense::   dw
 \1Speed::     dw
 \1Special::   dw
-\1PP::        ds 2 ; NUM_MOVES - 2
+\1PP::        ds NUM_MOVES
 \1BaseStats:: ds 5
 \1CatchRate:: ds 1
 \1BaseExp:: ds 1
@@ -56,6 +58,8 @@ enemy_struct: MACRO
 ENDM
 
 ;;;;;;;;;;;;;;;
+; we have to decouple box_struct from this, for now
+; due to a lot of code that accesses this array does so using pointer math
 party_struct: MACRO
 \1Species::    db
 \1HP::         dw
@@ -105,7 +109,6 @@ battle_struct: MACRO
 \1Speed::      dw
 \1Special::    dw
 \1PP::         ds NUM_MOVES
-\1Nick:: ds NAME_LENGTH
 \1Gender::ds 1
 ENDM
 
@@ -1664,55 +1667,19 @@ wPlayerMoveMaxPP:: ; cfd7
 	ds 1
 
 
-wEnemyMonSpecies2:: ; cfd8
+wEnemyMonSpecies2:: ; cfda
 	ds 1
-wBattleMonSpecies2:: ; cfd9
+wBattleMonSpecies2:: ; cfdb
 	ds 1
 
-wEnemyMonNick:: ds NAME_LENGTH ; cfda
-
-;wEnemyMon:: ; cfe5
-;; The wEnemyMon struct reaches past 0xcfff,
-;; the end of wram bank 0 on cgb.
-;; This has no significance on dmg, where wram
-;; isn't banked (c000-dfff is contiguous).
-;; However, recent versions of rgbds have replaced
-;; dmg-style wram with cgb wram banks.
-;
-;; Until this is fixed, this struct will have
-;; to be declared manually.
-;
-;wEnemyMonSpecies::   db
-;wEnemyMonHP::        dw
-;wEnemyMonPartyPos::
-;wEnemyMonBoxLevel::  db
-;wEnemyMonStatus::    db
-;wEnemyMonType::
-;wEnemyMonType1::     db
-;wEnemyMonType2::     db
-;wEnemyMonCatchRate_NotReferenced:: db
-;wEnemyMonMoves::     ds NUM_MOVES
-;wEnemyMonDVs::ds 2
-;wEnemyMonLevel::     db
-;wEnemyMonMaxHP::     dw
-;wEnemyMonAttack::    dw
-;wEnemyMonDefense::   dw
-;wEnemyMonSpeed::     dw
-;wEnemyMonSpecial::   dw
-;wEnemyMonPP::        ds 2 ; NUM_MOVES - 2
+wEnemyMonNick:: ds NAME_LENGTH ; cfdc
 wEnemyMon:: enemy_struct wEnemyMon ; cfe7
-
 ; SECTION "WRAM Bank 1", WRAMX, BANK[1]
-;                     ds 2 ; NUM_MOVES - 2
-;wEnemyMonBaseStats:: ds 5
-;wEnemyMonCatchRate:: ds 1
-;wEnemyMonBaseExp:: ds 1
-
-;wBattleMonNick:: ds NAME_LENGTH ; d009
-wBattleMon:: battle_struct wBattleMon ; d014
+wBattleMonNick:: ds NAME_LENGTH ; d00c
+wBattleMon:: battle_struct wBattleMon ; d017
 
 
-wTrainerClass:: ; d031
+wTrainerClass:: ; d035
 	ds 1
 
 ; unused?
@@ -3156,8 +3123,8 @@ wWalkBikeSurfState:: ; d700
 wKantoTownVisitedFlag:: ; d70b
 	ds 2
 
-;wJohtoTownVisitedFlag::
-;	ds 2
+wJohtoTownVisitedFlag::
+	ds 2
 
 wSafariSteps:: ; d70d
 ; starts at 502

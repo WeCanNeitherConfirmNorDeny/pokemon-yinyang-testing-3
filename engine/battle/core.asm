@@ -1819,7 +1819,11 @@ LoadBattleMonFromParty:
 	call ApplyBurnAndParalysisPenaltiesToPlayer
 	call ApplyBadgeStatBoosts
 	ld a, $7 ; default stat modifier
-	ld b, NUM_STAT_MODS
+	IF DEF(_HARD)
+		ld b, $ff
+	ELSE
+		ld b, NUM_STAT_MODS
+	ENDC
 	ld hl, wPlayerMonAttackMod
 .statModLoop
 	ld [hli], a
@@ -6390,9 +6394,9 @@ LoadEnemyMonData:
 ; Get trainer DVs from a table
 	callba GetTrainerMonDVs
 	ld hl, wTempDVs
-	ld a, [hli]
+	ld a, [hli] ; a = atk/def dv
 	ld [wEnemyMonGender], a ; trainer mon genders will be more consistent like in standard rpp
-	ld b, [hl]
+	ld b, [hl] ; b = spd/spc dv
 	jr .storeDVs
 .notTrainer
 ; forced shiny wildmon DVs

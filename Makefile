@@ -38,6 +38,9 @@ clean:
 	rm -f $(roms) $(pokered_obj) $(pokeblue_obj) $(roms:.gbc=.sym)
 	find . \( -iname '*.1bpp' -o -iname '*.2bpp' -o -iname '*.pic' \) -exec rm {} +
 
+objclean:
+	rm -f $(pokered_obj) $(pokeblue_obj)
+
 %.asm: ;
 
 %_red.o: dep = $(shell $(includes) $(@D)/$*.asm)

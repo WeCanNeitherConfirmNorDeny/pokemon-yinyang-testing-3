@@ -52,52 +52,83 @@ OakSpeech:
 	ld a,1
 	ld [wItemQuantity],a
 	call AddItemToInventory  ; give one potion
+
 ;;;;;;;;;;;;;;;
 ; debugging
 ; gives a few items to make things faster
-	ld c,99
-	ld b,$01 ; masterball
-	call GiveItem
-	ld c,99
-	ld b,$10 ; full restore
-	call GiveItem
-	ld c,99
-	ld b,$6C ; gold berry
-	call GiveItem
-	ld c,99
-	ld b,$28 ; rare candy
-	call GiveItem
-	ld c,99
-	ld b,$6B ; acai berry
-	call GiveItem
-	ld c,99
-	ld b,$6A ; lum berry
-	call GiveItem
-	ld c,99
-	ld b,$69 ; cheri berry
-	call GiveItem
-	ld c,99
-	ld b,$68 ; chesto berry
-	call GiveItem
-	ld c,99
-	ld b,$67 ; aspear berry
-	call GiveItem
-	ld c,99
-	ld b,$66 ; rawst berry
-	call GiveItem
-	ld c,99
-	ld b,$65 ; pecha berry
-	call GiveItem
-	ld c,99
-	ld b,$64 ; leppa berry
-	call GiveItem
-	ld c,99
-	ld b,$63 ; sitrus berry
-	call GiveItem
-	ld c,99
-	ld b,$62 ; oran berry
-	call GiveItem
-;;;;;;;;;;;;;;;
+	ld c, 99
+	ld b,MIRROR
+	call GiveItem ; mirror
+	ld c, 99
+	ld b,SNOWGLOBE
+	call GiveItem ; snowglobe
+	ld c, 99
+	ld b,OCEAN_BERRY
+	call GiveItem ; ocean berry
+	ld c, 99
+	ld b,GOLD_BERRY
+	call GiveItem ; gold berry
+	ld c, 99
+	ld b,$28
+	call GiveItem ; rare candy
+	ld c, 99
+	ld b,$01
+	call GiveItem ; masterball
+	ld c, 99
+	ld b,$10
+	call GiveItem ; full restore
+	ld c, 99
+	ld b,MAX_ELIXER
+	call GiveItem ; max elixir
+	ld c, 99
+	ld b,MAX_REVIVE
+	call GiveItem ; max revive
+	ld c, 99
+	ld b,$6B
+	call GiveItem ; acai berry
+	ld c, 99
+	ld b,$6A
+	call GiveItem ; lum berry
+	;ld c, 99
+	;ld b,$69
+	;call GiveItem ; cheri berry
+	;ld c, 99
+	;ld b,$68
+	;call GiveItem ; chesto berry
+	;ld c, 99
+	;ld b,$67
+	;call GiveItem ; aspear berry
+	;ld c, 99
+	;ld b,$66
+	;call GiveItem ; rawst berry
+	;ld c, 99
+	;ld b,$65
+	;call GiveItem ; pecha berry
+	;ld c, 99
+	;ld b,$64
+	;call GiveItem ; leppa berry
+	;ld c, 99
+	;ld b,$63
+	;call GiveItem ; sitrus berry
+	;ld c, 99
+	;ld b,$62
+	;call GiveItem ; oran berry
+	;ld c, 99
+	;ld b,HM_01
+	;call GiveItem ; hm 01
+	;ld c, 99
+	;ld b,HM_02
+	;call GiveItem ; hm 02
+	;ld c, 99
+	;ld b,HM_03
+	;call GiveItem ; hm 03
+	;ld c, 99
+	;ld b,HM_04
+	;call GiveItem ; hm 04
+	;ld c, 99
+	;ld b,HM_05
+	;call GiveItem ; hm 05
+
 	ld a,[wDefaultMap]
 	ld [wDestinationMap],a
 	call SpecialWarpIn

@@ -106,6 +106,9 @@ ItemNames:
 	db "Cheri Berry@"
 	db "Lum Berry@"
 	db "Acai Berry@"
-	db "[SHINY]Gold[SHINY] Berry@"
-	db "Go Home@"
+	db "[SHINY]Gold Berry@"
+	db "[SHINY]Ocean Berry@"
+	db "Go home@"
+	db "[SHINY]Snowglobe@"
+	db "[SHINY]Mirror@"
 

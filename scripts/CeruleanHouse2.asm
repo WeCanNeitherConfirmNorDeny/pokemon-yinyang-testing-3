@@ -52,7 +52,7 @@ CeruleanHouse2Text1:
 	jp TextScriptEnd
 
 BerryItemList:
-	db 10,ORAN_BERRY,SITRUS_BERRY,LEPPA_BERRY,PECHA_BERRY,RAWST_BERRY,ASPEAR_BERRY,CHESTO_BERRY,CHERI_BERRY,LUM_BERRY,ACAI_BERRY,GOLD_BERRY,$FF
+	db 10,ORAN_BERRY,SITRUS_BERRY,LEPPA_BERRY,PECHA_BERRY,RAWST_BERRY,ASPEAR_BERRY,CHESTO_BERRY,CHERI_BERRY,LUM_BERRY,ACAI_BERRY,GOLD_BERRY,OCEAN_BERRY,$FF
 
 CeruleanHouse2Text_74e77:
 	TX_FAR _CeruleanHouse2Text_74e77
@@ -78,6 +78,7 @@ MenuTextPointers:
 	dw LumBerryText
 	dw AcaiBerryText
 	dw GoldBerryText
+	dw OceanBerryText
 
 OranBerryText:
 	TX_FAR _OranBerryText
@@ -121,4 +122,7 @@ AcaiBerryText:
     
 GoldBerryText:
 	TX_FAR _GoldBerryText
+	db "@"
+OceanBerryText:
+	TX_FAR _OceanBerryText
 	db "@"
