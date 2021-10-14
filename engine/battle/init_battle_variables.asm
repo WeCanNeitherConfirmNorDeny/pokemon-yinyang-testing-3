@@ -12,6 +12,7 @@ InitBattleVariables:
 	ld [wListScrollOffset], a
 	ld [wCriticalHitOrOHKO], a
 	ld [wBattleMonSpecies], a
+	ld [wBattleMonGender], a
 	ld [wPartyGainExpFlags], a
 	ld [wPlayerMonNumber], a
 	ld [wEscapedFromBattle], a

@@ -1,3 +1,5 @@
+;XXX To gain some space I disabled a bunch of link battle features
+
 BattleCore:
 
 ; These are move effects (second value from the Moves table in bank $E).
@@ -364,14 +366,14 @@ StartBattle:
 ; wild mon or link battle enemy ran from battle
 EnemyRan:
 	call LoadScreenTilesFromBuffer1
-	ld a, [wLinkState]
-	cp LINK_STATE_BATTLING
+	;ld a, [wLinkState]
+	;cp LINK_STATE_BATTLING
 	ld hl, WildRanText
-	jr nz, .printText
-; link battle
-	xor a
-	ld [wBattleResult], a
-	ld hl, EnemyRanText
+	;jr nz, .printText
+;; link battle
+;	xor a
+;	ld [wBattleResult], a
+;	ld hl, EnemyRanText
 .printText
 	call PrintText
 	ld a, SFX_RUN
@@ -1240,13 +1242,13 @@ ChooseNextMon:
 .monChosen
 	call HasMonFainted
 	jr z, .goBackToPartyMenu ; if mon fainted, you have to choose another
-	ld a, [wLinkState]
-	cp LINK_STATE_BATTLING
-	jr nz, .notLinkBattle
-	inc a
-	ld [wActionResultOrTookBattleTurn], a
-	call LinkBattleExchangeData
-.notLinkBattle
+;	ld a, [wLinkState]
+;	cp LINK_STATE_BATTLING
+;	jr nz, .notLinkBattle
+;	inc a
+;	ld [wActionResultOrTookBattleTurn], a
+;	call LinkBattleExchangeData
+;.notLinkBattle
 	xor a
 	ld [wActionResultOrTookBattleTurn], a
 	call ClearSprites
@@ -1298,11 +1300,11 @@ HandlePlayerBlackOut:
 	ld b, SET_PAL_BATTLE_BLACK
 	call RunPaletteCommand
 	ld hl, PlayerBlackedOutText2
-	ld a, [wLinkState]
-	cp LINK_STATE_BATTLING
-	jr nz, .noLinkBattle
-	ld hl, LinkBattleLostText
-.noLinkBattle
+;	ld a, [wLinkState]
+;	cp LINK_STATE_BATTLING
+;	jr nz, .noLinkBattle
+;	ld hl, LinkBattleLostText
+;.noLinkBattle
 	call PrintText
 	ld a, [wd732]
 	res 5, a
@@ -1319,9 +1321,9 @@ PlayerBlackedOutText2:
 	TX_FAR _PlayerBlackedOutText2
 	db "@"
 
-LinkBattleLostText:
-	TX_FAR _LinkBattleLostText
-	db "@"
+;LinkBattleLostText:
+;	TX_FAR _LinkBattleLostText
+;	db "@"
 
 ; slides pic of fainted mon downwards until it disappears
 ; bug: when this is called, [H_AUTOBGTRANSFERENABLED] is non-zero, so there is screen tearing
@@ -1518,9 +1520,9 @@ EnemySendOutFirstMon:
 	ld a,[wPartyCount]
 	dec a
 	jr z,.next4
-	ld a,[wLinkState]
-	cp LINK_STATE_BATTLING
-	jr z,.next4
+	;ld a,[wLinkState]
+	;cp LINK_STATE_BATTLING
+	;jr z,.next4
 	ld a,[wOptions]
 	bit 6,a
 	jr nz,.next4
@@ -1743,22 +1745,22 @@ TryRunningFromBattle:
 	and a ; reset carry
 	ret
 .canEscape
-	ld a, [wLinkState]
-	cp LINK_STATE_BATTLING
-	ld a, $2
-	jr nz, .playSound
-; link battle
-	call SaveScreenTilesToBuffer1
-	xor a
-	ld [wActionResultOrTookBattleTurn], a
-	ld a, LINKBATTLE_RUN
-	ld [wPlayerMoveListIndex], a
-	call LinkBattleExchangeData
-	call LoadScreenTilesFromBuffer1
-	ld a, [wSerialExchangeNybbleReceiveData]
-	cp LINKBATTLE_RUN
-	ld a, $2
-	jr z, .playSound
+;	ld a, [wLinkState]
+;	cp LINK_STATE_BATTLING
+;	ld a, $2
+;	jr nz, .playSound
+;; link battle
+;	call SaveScreenTilesToBuffer1
+;	xor a
+;	ld [wActionResultOrTookBattleTurn], a
+;	ld a, LINKBATTLE_RUN
+;	ld [wPlayerMoveListIndex], a
+;	call LinkBattleExchangeData
+;	call LoadScreenTilesFromBuffer1
+;	ld a, [wSerialExchangeNybbleReceiveData]
+;	cp LINKBATTLE_RUN
+;	ld a, $2
+;	jr z, .playSound
 	dec a
 .playSound
 	ld [wBattleResult], a
@@ -1803,6 +1805,9 @@ LoadBattleMonFromParty:
 	ld de, wBattleMonLevel
 	ld bc, wBattleMonPP - wBattleMonLevel
 	call CopyData
+	ld de, wBattleMonGender
+	ld bc, SIZE_GENDER
+	call CopyData
 	ld a, [wBattleMonSpecies2]
 	ld [wd0b5], a
 	call GetMonHeader
@@ -1814,16 +1819,13 @@ LoadBattleMonFromParty:
 	call CopyData
 	ld hl, wBattleMonLevel
 	ld de, wPlayerMonUnmodifiedLevel ; block of memory used for unmodified stats
-	ld bc, 1 + NUM_STATS * 2
+	ld bc, 1 + (NUM_STATS * 2)
 	call CopyData
+
 	call ApplyBurnAndParalysisPenaltiesToPlayer
 	call ApplyBadgeStatBoosts
 	ld a, $7 ; default stat modifier
-	IF DEF(_HARD)
-		ld b, $ff
-	ELSE
-		ld b, NUM_STAT_MODS
-	ENDC
+	ld b, NUM_STAT_MODS
 	ld hl, wPlayerMonAttackMod
 .statModLoop
 	ld [hli], a
@@ -1851,6 +1853,9 @@ LoadEnemyMonFromParty:
 	ld de, wEnemyMonLevel
 	ld bc, wEnemyMonPP - wEnemyMonLevel
 	call CopyData
+	ld de, wEnemyMonGender
+	ld bc, SIZE_GENDER
+	call CopyData
 	ld a, [wEnemyMonSpecies]
 	ld [wd0b5], a
 	call GetMonHeader
@@ -1864,6 +1869,7 @@ LoadEnemyMonFromParty:
 	ld de, wEnemyMonUnmodifiedLevel ; block of memory used for unmodified stats
 	ld bc, 1 + NUM_STATS * 2
 	call CopyData
+
 	call ApplyBurnAndParalysisPenaltiesToEnemy
 	ld hl, wMonHBaseStats
 	ld de, wEnemyMonBaseStats
@@ -6371,13 +6377,9 @@ GetCurrentMove:
 	jp CopyStringToCF4B
 
 LoadEnemyMonData:
-	;generate random gender
-		call BattleRandom
-		ld [wBattleMonGender], a
-		ld [wEnemyMonGender], a
-	ld a, [wLinkState]
-	cp LINK_STATE_BATTLING
-	jp z, LoadEnemyMonFromParty
+	;ld a, [wLinkState]
+	;cp LINK_STATE_BATTLING
+	;jp z, LoadEnemyMonFromParty
 	ld a, [wEnemyMonSpecies2]
 	ld [wEnemyMonSpecies], a
 	ld [wd0b5], a
@@ -6394,18 +6396,28 @@ LoadEnemyMonData:
 ; Get trainer DVs from a table
 	callba GetTrainerMonDVs
 	ld hl, wTempDVs
-	ld a, [hli] ; a = atk/def dv
-	ld [wEnemyMonGender], a ; trainer mon genders will be more consistent like in standard rpp
-	ld b, [hl] ; b = spd/spc dv
+	ld a, [hli]
+	ld [wEnemyMonGender], a ; genders will be consistent with standard rpp
+	ld [wEnemyMonGender2], a
+	ld b, [hl]
 	jr .storeDVs
 .notTrainer
 ; forced shiny wildmon DVs
+;	call BattleRandom
+;	bit 0, a
 	ld a, ATKDEFDV_SHINY
+;	jr z, :+
+;	ld a, ATKDEFDV_SHINY_FEMALE
+;:
 	ld b, SPDSPCDV_SHINY
 	ld hl, wExtraFlags
 	bit 0, [hl]
 	res 0, [hl]
 	jr nz, .storeDVs
+; random sex for wild mon
+	call BattleRandom
+	ld [wEnemyMonGender], a ; initialise to random gender
+	ld [wEnemyMonGender2], a
 ; random DVs for wild mon
 	call BattleRandom
 	ld b, a
@@ -6543,17 +6555,17 @@ LoadEnemyMonData:
 
 ; calls BattleTransition to show the battle transition animation and initializes some battle variables
 DoBattleTransitionAndInitBattleVariables:
-	ld a, [wLinkState]
-	cp LINK_STATE_BATTLING
-	jr nz, .next
-; link battle
-	xor a
-	ld [wMenuJoypadPollCount], a
-	callab DisplayLinkBattleVersusTextBox
-	ld a, $1
-	ld [wUpdateSpritesEnabled], a
-	call ClearScreen
-.next
+;	ld a, [wLinkState]
+;	cp LINK_STATE_BATTLING
+;	jr nz, :+
+;; link battle
+;	xor a
+;	ld [wMenuJoypadPollCount], a
+;	callab DisplayLinkBattleVersusTextBox
+;	ld a, $1
+;	ld [wUpdateSpritesEnabled], a
+;	call ClearScreen
+;:
 	call DelayFrame
 	predef BattleTransition
 	callab LoadHudAndHpBarAndStatusTilePatterns
@@ -6952,9 +6964,10 @@ PrintEmptyString:
 BattleRandom:
 ; Link battles use a shared PRNG.
 
-	ld a, [wLinkState]
-	cp LINK_STATE_BATTLING
-	jp nz, Random
+	;ld a, [wLinkState]
+	;cp LINK_STATE_BATTLING
+	;jp nz, Random
+	jp Random
 
 	push hl
 	push bc
@@ -6999,7 +7012,6 @@ BattleRandom:
 	pop bc
 	pop hl
 	ret
-
 
 HandleExplodingAnimation:
 	ld a, [H_WHOSETURN]
@@ -7084,6 +7096,7 @@ InitBattleCommon:
 	call _LoadTrainerPic
 	xor a
 	ld [wEnemyMonSpecies2], a
+	ld [wEnemyMonGender2], a
 	ld [hStartTileID], a
 	dec a
 	ld [wAICount], a
@@ -7193,12 +7206,12 @@ _LoadTrainerPic:
 	ld a, [wTrainerPicPointer + 1]
 	ld d, a ; de contains pointer to trainer pic
 	ld a, [wTrainerPicBank] ; new
-;	ld a, [wLinkState]
-;	and a
-;	ld a, Bank(TrainerPics) ; this is where all the trainer pics are (not counting Red's)
-;	jr z, .loadSprite
-;	ld a, Bank(RedPicFront)
-;.loadSprite
+	ld a, [wLinkState]
+	and a
+	ld a, Bank(TrainerPics) ; this is where all the trainer pics are (not counting Red's)
+	jr z, .loadSprite
+	ld a, Bank(RedPicFront)
+.loadSprite
 	call UncompressSpriteFromDE
 	ld de, vFrontPic
 	ld a, $77
@@ -9236,9 +9249,7 @@ PhysicalSpecialSplit:
 
 PrintEnemyMonGender: ; called during battle
 	; get gender
-	;ld a, [wEnemyMonSpecies]
-	ld a, [wEnemyMonSpecies2]
-	ld [wGenderTemp],a
+	ld a, [wEnemyMonSpecies]
 	ld de, wEnemyMonGender
 	call PrintGenderCommon
 	coord hl, 9, 1
@@ -9247,9 +9258,7 @@ PrintEnemyMonGender: ; called during battle
 
 PrintPlayerMonGender: ; called during battle
 	; get gender
-	;ld a, [wBattleMonSpecies]
-	ld a, [wBattleMonSpecies2]
-	ld [wGenderTemp],a
+	ld a, [wBattleMonSpecies]
 	ld de, wBattleMonGender
 	call PrintGenderCommon
 	coord hl, 17, 8
@@ -9257,15 +9266,9 @@ PrintPlayerMonGender: ; called during battle
 	ret
 
 PrintGenderCommon: ; used by both routines
-	; de = gender
-	; a = species
+	ld [wGenderTemp], a
 	callba GetMonGender
-
 	ld a, [wGenderTemp]
-; a is one of:
-;GENDERLESS EQU $00
-;MALE       EQU $01
-;FEMALE     EQU $02
 	and a
 	jr z, .noGender
 	dec a

@@ -6,68 +6,66 @@ flag_array: MACRO
 ENDM
 
 ;;;;;;;;;;;;;;;
-box_struct_length EQU (1*7) + (2*2) + (3*1) + (2*NUM_STATS) + (1*NUM_DVS) + (1*NUM_MOVES*2)
+; wDayCareMon:: box_struct wDayCareMon
+; wDayCareMon2:: box_struct wDayCareMon2
+; wBoxMon1:: box_struct wBoxMon1
+; wBoxMon2:: ds box_struct_length * (MONS_PER_BOX + -1)
+box_struct_length EQU \
+	(1*7)+(1*NUM_MOVES*2)+(1*NUM_DVS) \
+	+ (2*1)+(2*NUM_STATS) \
+	+ (3*1)
 box_struct: MACRO
+\1@start::
 \1Species::    db
 \1HP::         dw
-\1BoxLevel::   db
-\1Status::     db
-\1Type::
-\1Type1::      db
-\1Type2::      db
-\1CatchRate::  db
-\1Moves::      ds NUM_MOVES
-\1OTID::       dw
-\1Exp::        ds 3
-\1HPExp::      dw
-\1AttackExp::  dw
-\1DefenseExp:: dw
-\1SpeedExp::   dw
-\1SpecialExp:: dw
-\1DVs::ds 2
-\1PP::         ds NUM_MOVES
-\1Gender::ds 1
-ENDM
-
-;;;;;;;;;;;;;;;
-; using dmg mapping along with other mods
-; have made the tagged addresses in some of these comments out of date
-enemy_struct: MACRO
-\1Species::   db
-\1HP::        dw
 \1PartyPos::
-\1BoxLevel::  db
-\1Status::    db
-\1Type::
-\1Type1::     db
-\1Type2::     db
-\1CatchRate_NotReferenced:: db
-\1Moves::     ds NUM_MOVES
-\1DVs::ds 2
-\1Level::     db
-\1MaxHP::     dw
-\1Attack::    dw
-\1Defense::   dw
-\1Speed::     dw
-\1Special::   dw
-\1PP::        ds NUM_MOVES
-\1BaseStats:: ds 5
-\1CatchRate:: ds 1
-\1BaseExp:: ds 1
-\1Gender::ds 1
-ENDM
-
-;;;;;;;;;;;;;;;
-; we have to decouple box_struct from this, for now
-; due to a lot of code that accesses this array does so using pointer math
-party_struct: MACRO
-\1Species::    db
-\1HP::         dw
 \1BoxLevel::   db
 \1Status::     db
 \1Type::
 \1Type1::      db
 \1Type2::      db
+\1CatchRate_NotReferenced::
+\1CatchRate::  db
+\1Moves::      ds NUM_MOVES
+\1OTID::       dw
+\1Exp::        ds 3
+\1EVs::
+\1HPExp::      dw
+\1AttackExp::  dw
+\1DefenseExp:: dw
+\1SpeedExp::   dw
+\1SpecialExp:: dw
+\1IVs::
+\1DVs::        ds NUM_DVS
+\1PP::         ds NUM_MOVES
+\1@end::
+ENDM
+
+;;;;;;;;;;;;;;;
+; wLoadedMon:: party_struct wLoadedMon
+; wPartyMon1:: party_struct wPartyMon1
+; wPartyMon2:: party_struct wPartyMon2
+; wPartyMon3:: party_struct wPartyMon3
+; wPartyMon4:: party_struct wPartyMon4
+; wPartyMon5:: party_struct wPartyMon5
+; wPartyMon6:: party_struct wPartyMon6
+; wEnemyMon1:: party_struct wEnemyMon1
+; wEnemyMon2:: party_struct wEnemyMon2
+; wEnemyMon3:: party_struct wEnemyMon3
+; wEnemyMon4:: party_struct wEnemyMon4
+; wEnemyMon5:: party_struct wEnemyMon5
+; wEnemyMon6:: party_struct wEnemyMon6
+party_struct: MACRO
+\1@start::
+\1Species::    db
+\1HP::         dw
+\1PartyPos::
+\1BoxLevel::   db
+\1Status::     db
+\1Type::
+\1Type1::      db
+\1Type2::      db
+\1CatchRate_NotReferenced::
 \1CatchRate::  db
 \1Moves::      ds NUM_MOVES
 \1OTID::       dw
@@ -77,30 +75,34 @@ party_struct: MACRO
 \1DefenseExp:: dw
 \1SpeedExp::   dw
 \1SpecialExp:: dw
-\1DVs::ds 2
+\1DVs::        ds NUM_DVS
 \1PP::         ds NUM_MOVES
-\1Level::	db
+\1Level::      db
 \1Stats::
-\1MaxHP::	dw
-\1Attack::	dw
-\1Defense::	dw
-\1Speed::	dw
-\1Special::	dw
-\1Gender::ds 1
+\1MaxHP::      dw
+\1Attack::     dw
+\1Defense::    dw
+\1Speed::      dw
+\1Special::    dw
+\1@end::
 ENDM
 
 ;;;;;;;;;;;;;;;
+; wBattleMon:: battle_struct wBattleMon
 battle_struct: MACRO
+\1@start::
 \1Species::    db
 \1HP::         dw
+\1PartyPos::
 \1BoxLevel::   db
 \1Status::     db
 \1Type::
 \1Type1::      db
 \1Type2::      db
+\1CatchRate_NotReferenced::
 \1CatchRate::  db
 \1Moves::      ds NUM_MOVES
-\1DVs::ds 2
+\1DVs::        ds NUM_DVS
 \1Level::      db
 \1Stats::
 \1MaxHP::      dw
@@ -109,8 +111,46 @@ battle_struct: MACRO
 \1Speed::      dw
 \1Special::    dw
 \1PP::         ds NUM_MOVES
-\1Gender::ds 1
+\1@end::
 ENDM
+
+;;;;;;;;;;;;;;;
+;; The wEnemyMon struct reaches past 0xcfff,
+;; the end of wram bank 0 on cgb.
+;; This has no significance on dmg, where wram
+;; isn't banked (c000-dfff is contiguous).
+;; However, recent versions of rgbds have replaced
+;; dmg-style wram with cgb wram banks.
+;
+;; Until this is fixed, this struct will have
+;; to be declared manually.
+;
+; wEnemyMon:: enemy_struct wEnemyMon
+;enemy_struct: MACRO
+;\1@start::
+;\1Species::   db
+;\1HP::        dw
+;\1PartyPos::
+;\1BoxLevel::  db
+;\1Status::    db
+;\1Type::
+;\1Type1::     db
+;\1Type2::     db
+;\1CatchRate_NotReferenced::
+;\1CatchRate::db
+;\1Moves::     ds NUM_MOVES
+;\1DVs::       ds NUM_DVS
+;\1Level::     db
+;\1Stats::
+;\1MaxHP::     dw
+;\1Attack::    dw
+;\1Defense::   dw
+;\1Speed::     dw
+;\1Special::   dw
+;\1PP::        ds NUM_MOVES
+;\1Gender::ds 1
+;\1@end::
+;ENDM
 
 SECTION "WRAM Bank 0", WRAM0
 
@@ -679,9 +719,11 @@ wDeletableMoves::
 ; First byte is the number of moves in this list.
 ; List is terminated with $ff
 	ds 1
+wAuxTemp::
+	ds 8
 wGenderTemp::
 ; temporary buffer used when checking/displaying a Pokemon's gender
-	ds 9
+	ds 1
 
 wNumStepsToTake:: ; cca1
 ; used in Pallet Town scripted movement
@@ -1587,7 +1629,8 @@ wMaxItemQuantity:: ; cf97
 
 ; LoadMonData copies mon data here
 wLoadedMon:: party_struct wLoadedMon ; cf98
-wLoadedMonNew::	db ; cf99
+wLoadedMonGender::
+	db
 
 wFontLoaded:: ; cfc4
 ; bit 0: The space in VRAM that is used to store walk animation tile patterns
@@ -1667,19 +1710,58 @@ wPlayerMoveMaxPP:: ; cfd7
 	ds 1
 
 
-wEnemyMonSpecies2:: ; cfda
+wEnemyMonSpecies2:: ; cfd9
 	ds 1
-wBattleMonSpecies2:: ; cfdb
+wPlayerMonSpecies2:: ; cfda
+wBattleMonSpecies2:: ; cfda
+	ds 1
+wEnemyMonGender2:: ; cfdb
+	ds 1
+wPlayerMonGender2:: ; cfdc
+wBattleMonGender2:: ; cfdc
 	ds 1
 
-wEnemyMonNick:: ds NAME_LENGTH ; cfdc
-wEnemyMon:: enemy_struct wEnemyMon ; cfe7
-; SECTION "WRAM Bank 1", WRAMX, BANK[1]
-wBattleMonNick:: ds NAME_LENGTH ; d00c
-wBattleMon:: battle_struct wBattleMon ; d017
+wEnemyMonNick:: ds NAME_LENGTH ; cfda
 
+;wEnemyMon:: ; cfe5
+;
+;wEnemyMonSpecies::   db
+;wEnemyMonHP::        dw
+;wEnemyMonPartyPos::
+;wEnemyMonBoxLevel::  db
+;wEnemyMonStatus::    db
+;wEnemyMonType::
+;wEnemyMonType1::     db
+;wEnemyMonType2::     db
+;wEnemyMonCatchRate_NotReferenced:: db
+;wEnemyMonMoves::     ds NUM_MOVES
+;wEnemyMonDVs::       ds 2
+;wEnemyMonLevel::     db
+;wEnemyMonMaxHP::     dw
+;wEnemyMonAttack::    dw
+;wEnemyMonDefense::   dw
+;wEnemyMonSpeed::     dw
+;wEnemyMonSpecial::   dw
+;wEnemyMonPP::        ds NUM_MOVES
+;wEnemyMonGender::ds 1
+;SECTION "WRAM Bank 1", WRAMX, BANK[1]
 
-wTrainerClass:: ; d035
+;wEnemyMon:: enemy_struct wEnemyMon
+wEnemyMon:: battle_struct wEnemyMon
+wEnemyMonGender::
+	db
+
+wEnemyMonBaseStats:: ds 5
+wEnemyMonBaseExp:: ds 1
+
+wPlayerMonNick::
+wBattleMonNick:: ds NAME_LENGTH ; d009
+wPlayerMon::
+wBattleMon:: battle_struct wBattleMon ; d014
+wBattleMonGender::
+	db
+
+wTrainerClass:: ; d031
 	ds 1
 
 ; unused?
@@ -2401,11 +2483,21 @@ wPartyEnd::     ds 1 ; d16a
 
 wPartyMons::
 wPartyMon1:: party_struct wPartyMon1 ; d16b
+wPartyMon1Gender::db
 wPartyMon2:: party_struct wPartyMon2 ; d197
+wPartyMon2Gender::db
 wPartyMon3:: party_struct wPartyMon3 ; d1c3
+wPartyMon3Gender::db
 wPartyMon4:: party_struct wPartyMon4 ; d1ef
+wPartyMon4Gender::db
 wPartyMon5:: party_struct wPartyMon5 ; d21b
+wPartyMon5Gender::db
 wPartyMon6:: party_struct wPartyMon6 ; d247
+wPartyMon6Gender::db
+IF PARTY_LENGTH > 6
+wPartyMon7:: party_struct wPartyMon7
+wPartyMon7Gender::db
+ENDC
 
 wPartyMonOT::    ds NAME_LENGTH * PARTY_LENGTH ; d273
 wPartyMonNicks:: ds NAME_LENGTH * PARTY_LENGTH ; d2b5
@@ -3123,8 +3215,8 @@ wWalkBikeSurfState:: ; d700
 wKantoTownVisitedFlag:: ; d70b
 	ds 2
 
-wJohtoTownVisitedFlag::
-	ds 2
+;wJohtoTownVisitedFlag::
+;	ds 2
 
 wSafariSteps:: ; d70d
 ; starts at 502
@@ -3356,11 +3448,21 @@ NEXTU
 
 wEnemyMons:: ; d8a4
 wEnemyMon1:: party_struct wEnemyMon1
+wEnemyMon1Gender::db
 wEnemyMon2:: party_struct wEnemyMon2
+wEnemyMon2Gender::db
 wEnemyMon3:: party_struct wEnemyMon3
+wEnemyMon3Gender::db
 wEnemyMon4:: party_struct wEnemyMon4
+wEnemyMon4Gender::db
 wEnemyMon5:: party_struct wEnemyMon5
+wEnemyMon5Gender::db
 wEnemyMon6:: party_struct wEnemyMon6
+wEnemyMon6Gender::db
+IF PARTY_LENGTH > 6
+wEnemyMon7:: party_struct wEnemyMon7
+wEnemyMon7Gender::db
+ENDC
 
 wEnemyMonOT::    ds NAME_LENGTH * PARTY_LENGTH
 wEnemyMonNicks:: ds NAME_LENGTH * PARTY_LENGTH
@@ -3372,8 +3474,8 @@ ENDU
 wTrainerHeaderPtr:: ; da30
 	ds 2
 
-;; unused?
-;	ds 6
+; unused?
+	ds 6
 
 wOpponentAfterWrongAnswer:: ; da38
 ; the trainer the player must face after getting a wrong answer in the Cinnabar
@@ -3387,8 +3489,8 @@ wCurMapScript:: ; da39
 ; mostly copied from map-specific map script pointer and written back later
 	ds 1
 
-;; unused?
-;	ds 7
+; unused?
+	ds 7
 
 wPlayTimeHours:: ; da41
 	ds 1
@@ -3418,19 +3520,15 @@ wDayCareInUse:: ; da48
 ; bit 2 - Egg waiting at Day Care
 	ds 1
 
-wDayCareMon:: box_struct wDayCareMon ; Lady
-wDayCareMonNew:: db
 wDayCareMonName:: ds NAME_LENGTH ; Lady
 wDayCareMonOT::   ds NAME_LENGTH ; Lady
 
-wDayCareMon2:: box_struct wDayCareMon2 ; Man
-wDayCareMon2New:: db
+wDayCareMon:: box_struct wDayCareMon ; Lady
+
 wDayCareMon2Name:: ds NAME_LENGTH ; Man
 wDayCareMon2OT::   ds NAME_LENGTH ; Man
-;wDayCareMon2::
-;wDayCareMon2New::
-;wDayCareMon2Name::
-;wDayCareMon2OT::
+
+wDayCareMon2:: box_struct wDayCareMon2 ; Man
 
 wMainDataEnd::
 
@@ -3442,8 +3540,7 @@ wBoxSpecies:: ds MONS_PER_BOX + 1
 
 wBoxMons::
 wBoxMon1:: box_struct wBoxMon1 ; da96
-wBoxMon1New:: db
-wBoxMon2:: ds (box_struct_length + 1) * (MONS_PER_BOX + -1) ; dab7
+wBoxMon2:: ds box_struct_length * (MONS_PER_BOX + -1) ; dab7
 
 wBoxMonOT::    ds NAME_LENGTH * MONS_PER_BOX ; dd2a
 wBoxMonNicks:: ds NAME_LENGTH * MONS_PER_BOX ; de06

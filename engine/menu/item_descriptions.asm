@@ -236,11 +236,11 @@ ItemDescriptionPointers:
 	db "@"
 	TX_FAR _OceanBerryDescription
 	db "@"
-	TX_FAR _GoHomeDescription
-	db "@"
 	TX_FAR _SnowglobeDescription
 	db "@"
 	TX_FAR _MirrorDescription
+	db "@"
+	TX_FAR _GoHomeDescription
 	db "@"
 	TX_FAR _HM01Description
 	db "@"
@@ -605,11 +605,11 @@ ItemDescriptionPointers_Mart:
 	db "@"
 	TX_FAR _OceanBerryDescription_Mart
 	db "@"
-	TX_FAR _GoHomeDescription_Mart
-	db "@"
 	TX_FAR _SnowglobeDescription_Mart
 	db "@"
 	TX_FAR _MirrorDescription_Mart
+	db "@"
+	TX_FAR _GoHomeDescription_Mart
 	db "@"
 	TX_FAR _HM01Description_Mart
 	db "@"

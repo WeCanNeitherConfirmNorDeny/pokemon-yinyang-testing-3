@@ -26,9 +26,7 @@ roms := pokered.gbc pokeblue.gbc
 
 all: $(roms)
 red: pokered.gbc
-yin: pokered.gbc
 blue: pokeblue.gbc
-yang: pokeblue.gbc
 
 # For contributors to make sure a change didn't affect the contents of the rom.
 compare: red blue
@@ -51,12 +49,13 @@ $(pokered_obj): %_red.o: %.asm $$(dep)
 $(pokeblue_obj): %_blue.o: %.asm $$(dep)
 	$(RGBDS_DIR)rgbasm -Wall -D _BLUE -h -o $@ $*.asm
 
-pokered_opt  = -Cjv -k 01 -l 0x33 -m 0x13 -p 0 -r 03 -t "POKEMON YIN"
-pokeblue_opt = -Cjv -k 01 -l 0x33 -m 0x13 -p 0 -r 03 -t "POKEMON YANG"
+rgbfix_opt  = -Cjv -k 01 -l 0x33 -n 69 -m 0x1e -p 0 -r 03
+pokered_opt  = -t "YIN"
+pokeblue_opt = -t "YANG"
 
 %.gbc: $$(%_obj)
 	$(RGBDS_DIR)rgblink -d -n $*.sym -d -o $@ $^
-	$(RGBDS_DIR)rgbfix $($*_opt) $@
+	$(RGBDS_DIR)rgbfix $(rgbfix_opt) $($*_opt) $@
 	sort $*.sym -o $*.sym
 
 %.png:  ;

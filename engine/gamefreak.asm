@@ -72,7 +72,7 @@ AnimateShootingStar:
 	jr nz, .clearOAMLoop
 
 ; Make Gamefreak logo flash.
-	ld b, 3
+	ld b, 3 ; delay (between flashes)
 .flashLogoLoop
 	ld hl, rOBP0
 	rrc [hl]
@@ -204,7 +204,8 @@ MoveDownSmallStars:
 ; Toggle the palette so that the lower star in the small stars tile blinks in
 ; and out.
 	ld a, [rOBP1]
-	xor %10100000
+	;xor %10100000
+	xor %10110100
 	ld [rOBP1], a
 
 	ld c, 3
@@ -215,6 +216,23 @@ MoveDownSmallStars:
 	ret
 
 GameFreakLogoOAMData:
+; these are the tiles and some properties that show during the GAMEFREAK shooting star intro
+	;db $48,$50,$8D,$00
+	;db $48,$58,$8E,$00
+	;db $50,$50,$8F,$00
+	;db $50,$58,$90,$00
+	;db $58,$50,$91,$00
+	;db $58,$58,$92,$00
+	;db $60,$30,$80,$00
+	;db $60,$38,$81,$00
+	;db $60,$40,$82,$00
+	;db $60,$48,$83,$00
+	;db $60,$50,$93,$00
+	;db $60,$58,$84,$00
+	;db $60,$60,$85,$00
+	;db $60,$68,$83,$00
+	;db $60,$70,$81,$00
+	;db $60,$78,$86,$00
 	db $48,$50,$8D,$00 ; 40
 	db $48,$58,$8E,$00 ; 40
 	db $50,$50,$8F,$00

@@ -106,9 +106,8 @@ ItemPrices:
 	money 10    ; CHERI_BERRY
 	money 10    ; LUM_BERRY
 	money 10    ; ACAI_BERRY
-	money 99000 ; GOLD_BERRY
-	money 99990 ; OCEAN_BERRY
-	money 0     ; GO_HOME
-	money 0     ; SNOWGLOBE
-	money 0     ; MIRROR
-
+	money 0 ; GOLD_BERRY
+	money 0 ; OCEAN_BERRY
+	money 0 ; SNOWGLOBE
+	money 0 ; MIRROR
+	money 0 ; GO_HOME

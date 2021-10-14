@@ -125,9 +125,9 @@ ItemUsePtrTable:
 	dw ItemUseVitamin    ; ACAI_BERRY
 	dw ItemUseVitamin    ; GOLD_BERRY
 	dw ItemUseVitamin    ; OCEAN_BERRY
-	dw UnusableItem      ; GO_HOME
 	dw ItemUseSnowglobe  ; SNOWGLOBE
 	dw ItemUseMirror     ; MIRROR
+	dw UnusableItem      ; GO_HOME
 
 ItemThiefBall:
 	ld a,[wIsInBattle]
@@ -923,15 +923,15 @@ ItemUseMedicine:
 	jr z,ItemUseMedicine ; if so, force another choice
 .checkItemType
 	ld a,[wcf91]
-	cp a,OCEAN_BERRY ; ocean berry
+	cp a,OCEAN_BERRY
 	jp z,.useVitamin
-	cp a,GOLD_BERRY ; gold berry
+	cp a,GOLD_BERRY
 	jp z,.useVitamin
-	cp a,ACAI_BERRY ; acai berry
+	cp a,ACAI_BERRY
 	jp z,.useVitamin
-	cp a,PECHA_BERRY ; pecha berry
+	cp a,PECHA_BERRY
 	jp nc,.cureStatusAilment
-	cp a,ORAN_BERRY ; oran berry
+	cp a,ORAN_BERRY
 	jp nc,.healHP
 	cp a,REVIVE
 	jp nc,.healHP ; if it's a Revive or Max Revive
@@ -1368,9 +1368,9 @@ ItemUseMedicine:
 	cp a,ACAI_BERRY
 	jp z,.useRareCandy
 	cp a,GOLD_BERRY
-	jp z,.useGoldBerry ; gold berry
+	jp z,.useGoldBerry
 	cp a,OCEAN_BERRY
-	jp z,.useOceanBerry ; ocean berry
+	jp z,.useOceanBerry
 	push hl
 	sub a,HP_UP
 	add a
@@ -1517,7 +1517,7 @@ ItemUseMedicine:
 	pop af
 	ld [wWhichPokemon],a
 	jp RemoveUsedItem
-;;;;;;;;;;;;;;;
+
 .useGoldBerry ; gold berry
 	push hl
 	ld bc, (wPartyMon1DVs - wPartyMon1) ; calc the offset to dvs
@@ -1549,7 +1549,6 @@ ItemUseMedicine:
 	call GBPalWhiteOut ; fix/prevent screen glitch
 	pop hl
 	jp RemoveUsedItem
-;;;;;;;;;;;;;;;
 .useOceanBerry ; ocean berry
 	push hl
 	ld bc, (wPartyMon1HPExp - wPartyMon1) ; calc the offset to hp exp
@@ -1611,7 +1610,6 @@ ItemUseMedicine:
 	;call GBPalWhiteOut ; fix/prevent screen glitch
 	pop hl
 	jp RemoveUsedItem
-
 useGoldBerryText:
 	TX_FAR _useGoldBerryText
 	db "@"
@@ -2282,6 +2280,8 @@ ItemUseSnowglobe: ; snowglobe
 	and a
 	jp nz,ItemUseNotTime
 	call Random
+	and a
+	jr z, .noz
 	ld hl, wExtraFlags
 	IF DEF(_HARD)
 		cp %00000011 ; 1,2,or 3 out of $ff (good luck lmao)
@@ -2301,7 +2301,6 @@ ItemUseSnowglobe: ; snowglobe
 	;
 	.noz
 	jp PrintText
-
 useSnowglobeIcyText:
 	TX_FAR _useSnowglobeIcyText
 	db "@"
@@ -2310,13 +2309,14 @@ useSnowglobeHotText:
 	db "@"
 
 ItemUseMirror: ; mirror
-; brifly glitches
+; brifly glitches when it switches the tileset
 	ld a,[wIsInBattle]
 	and a
 	jp nz,ItemUseNotTime
-	; show message
-	ld hl,useMirrorText
+	ld hl,useMirrorText ; show message
 	call PrintText
+	push bc
+	call RemoveUsedItem
 	; open fly map with all zones active
 	push bc
 	ld hl, wKantoTownVisitedFlag
@@ -2338,7 +2338,6 @@ ItemUseMirror: ; mirror
 	pop bc
 	call GBPalWhiteOut
 	jp CloseStartMenu
-
 useMirrorText:
 	TX_FAR _useMirrorText
 	db "@"
@@ -2574,6 +2573,7 @@ ItemUseTMHM:
 .printBootedUpMachineText
 	call PrintText
 	ld hl,TeachMachineMoveText
+	call PrintText
 	coord hl, 14, 7
 	lb bc, 8, 15
 	ld a,TWO_OPTION_MENU

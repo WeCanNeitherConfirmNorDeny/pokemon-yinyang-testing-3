@@ -1,46 +1,52 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; INPUTS -
-;	de = gender stat
-;	wGenderTemp = species
+;	*de = gender stat
+;	a = wGenderTemp = species
 ; OUTPUT -
-;	wGenderTemp = Mon's gender
+;	a = wGenderTemp = Mon's gender
 GetMonGender::
 	ld hl, MonGenderRatios
 	ld a, [wGenderTemp]
 	dec a
 	ld c, a
 	ld b, 0
-	add hl, bc ; hl now points to the species gender ratio
-
+	add hl, bc
 	ld a, [de]
-	ld b, a ; b == gender stat
+	ld b, a ; b = gender stat
+	ld a, [hl] ; a = gender ratio
 
-; Get the gender ratio
-	ld a, [hl]
-
-; Check for always one or another
-	cp NO_GENDER
-	jr z, .genderless
-
+;;;;;;;;;;;;;;;
+; Check for horses
+; a == mon's gender ratio
+	cp MALE_ONLY
+	jr z, .male
 	cp FEMALE_ONLY
 	jr z, .female
+	and a
+	jr z, .genderless
 
-	and a ; MALE_ONLY
-	jr z, .male
+	; else... fall through
 
+;;;;;;;;;;;;;;;
+; Check for zebras
 ; Else: compare the ratio to the value we found earlier
+; a == ratio for the species
 ; b == gender stat
-; a == one of:
+
+; if a < b, its female
+	dec a
 	cp b
 	jr c, .male
-.female
-	ld a, FEMALE
-	jr .done
+	jr .female
 .male
 	ld a, MALE
 	jr .done
+.female
+	ld a, FEMALE
+	jr .done
 .genderless
-	ld a, GENDERLESS
+	xor a
+	jr .done
 .done
 	ld [wGenderTemp], a
 	ret
@@ -126,8 +132,8 @@ MonGenderRatios:
 	db SAME_BOTH_GENDERS ; Rapidash
 	db SAME_BOTH_GENDERS ; Slowpoke
 	db SAME_BOTH_GENDERS ; Slowbro
-	db NO_GENDER         ; Magnemite
-	db NO_GENDER         ; Magneton
+	db GENDERLESS         ; Magnemite
+	db GENDERLESS         ; Magneton
 	db SAME_BOTH_GENDERS ; Farfetch'd
 	db SAME_BOTH_GENDERS ; Doduo
 	db SAME_BOTH_GENDERS ; Dodrio
@@ -145,8 +151,8 @@ MonGenderRatios:
 	db SAME_BOTH_GENDERS ; Hypno
 	db SAME_BOTH_GENDERS ; Krabby
 	db SAME_BOTH_GENDERS ; Kingler
-	db NO_GENDER         ; Voltorb
-	db NO_GENDER         ; Electrode
+	db GENDERLESS         ; Voltorb
+	db GENDERLESS         ; Electrode
 	db SAME_BOTH_GENDERS ; Exeggcute
 	db SAME_BOTH_GENDERS ; Exeggutor
 	db SAME_BOTH_GENDERS ; Cubone
@@ -165,8 +171,8 @@ MonGenderRatios:
 	db SAME_BOTH_GENDERS ; Seadra
 	db SAME_BOTH_GENDERS ; Goldeen
 	db SAME_BOTH_GENDERS ; Seaking
-	db NO_GENDER         ; Staryu
-	db NO_GENDER         ; Starmie
+	db GENDERLESS         ; Staryu
+	db GENDERLESS         ; Starmie
 	db SAME_BOTH_GENDERS ; Mr. Mime
 	db SAME_BOTH_GENDERS ; Scyther
 	db FEMALE_ONLY       ; Jynx
@@ -177,27 +183,27 @@ MonGenderRatios:
 	db SAME_BOTH_GENDERS ; Magikarp
 	db SAME_BOTH_GENDERS ; Gyarados
 	db SAME_BOTH_GENDERS ; Lapras
-	db NO_GENDER         ; Ditto
+	db GENDERLESS         ; Ditto
 	db MALE_88_PERCENT   ; Eevee
 	db MALE_88_PERCENT   ; Vaporeon
 	db MALE_88_PERCENT   ; Jolteon
 	db MALE_88_PERCENT   ; Flareon
-	db NO_GENDER         ; Porygon
+	db GENDERLESS         ; Porygon
 	db MALE_88_PERCENT   ; Omanyte
 	db MALE_88_PERCENT   ; Omastar
 	db MALE_88_PERCENT   ; Kabuto
 	db MALE_88_PERCENT   ; Kabutops
 	db MALE_88_PERCENT   ; Aerodactyl
 	db MALE_88_PERCENT   ; Snorlax
-	db NO_GENDER         ; Articuno
-	db NO_GENDER         ; Zapdos
-	db NO_GENDER         ; Moltres
+	db GENDERLESS         ; Articuno
+	db GENDERLESS         ; Zapdos
+	db GENDERLESS         ; Moltres
 	db SAME_BOTH_GENDERS ; Dratini
 	db SAME_BOTH_GENDERS ; Dragonair
 	db SAME_BOTH_GENDERS ; Dragonite
-	db NO_GENDER         ; Mewtwo
-	db NO_GENDER         ; Mew
-	db NO_GENDER         ; Lugia
+	db GENDERLESS         ; Mewtwo
+	db GENDERLESS         ; Mew
+	db GENDERLESS         ; Lugia
 	db SAME_BOTH_GENDERS ; Houndour
 	db SAME_BOTH_GENDERS ; Houndoom
 	db SAME_BOTH_GENDERS ; Murkrow
@@ -216,11 +222,11 @@ MonGenderRatios:
 	db SAME_BOTH_GENDERS ; Bellossom
 	db SAME_BOTH_GENDERS ; Kingdra
 	db FEMALE_ONLY       ; Blissey
-	db NO_GENDER         ; Porygon 2
-	db NO_GENDER         ; Porygon Z
+	db GENDERLESS         ; Porygon 2
+	db GENDERLESS         ; Porygon Z
 	db MALE_75_PERCENT   ; Magmortar
 	db MALE_75_PERCENT   ; Electivire
-	db NO_GENDER         ; Magnezone
+	db GENDERLESS         ; Magnezone
 	db SAME_BOTH_GENDERS ; Rhyperior
 	db SAME_BOTH_GENDERS ; Tangrowth
 	db SAME_BOTH_GENDERS ; Lickilicky
@@ -238,8 +244,8 @@ MonGenderRatios:
 	db SAME_BOTH_GENDERS ; Slugma
 	db SAME_BOTH_GENDERS ; Magcargo
 	db SAME_BOTH_GENDERS ; Torkoal
-	db NO_GENDER         ; Latios
-	db NO_GENDER         ; Latias
+	db GENDERLESS         ; Latios
+	db GENDERLESS         ; Latias
 	db MALE_ONLY         ; Hitmontop
 	db MALE_ONLY         ; Tyrogue
 	db SAME_BOTH_GENDERS ; Pichu
@@ -253,4 +259,4 @@ MonGenderRatios:
 	db MALE_88_PERCENT   ; Munchlax
 	db SAME_BOTH_GENDERS ; Zigzagoon
 	db SAME_BOTH_GENDERS ; Linoone
-	db NO_GENDER         ; Ho-oh
+	db GENDERLESS        ; Ho-oh

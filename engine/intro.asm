@@ -9,7 +9,7 @@ PlayIntro:
 	ld [H_AUTOBGTRANSFERENABLED], a
 	call PlayShootingStar
 	call PlayIntroScene
-	call GBFadeOutToBlack
+	call GBFadeOutToWhite
 	xor a
 	ld [hSCX], a
 	ld [H_AUTOBGTRANSFERENABLED], a
@@ -39,103 +39,103 @@ PlayIntroScene:
 	ret c
 
 ; hip
-	;ld a, SFX_INTRO_HIP
-	;call PlaySound
+	ld a, SFX_INTRO_HIP
+	call PlaySound
 	xor a
 	ld [wIntroNidorinoBaseTile], a
 	ld de, IntroNidorinoAnimation1
 	call AnimateIntroNidorino
-;; hop
-;	ld a, SFX_INTRO_HOP
-;	call PlaySound
-;	ld de, IntroNidorinoAnimation2
-;	call AnimateIntroNidorino
-;	ld c, $a
-;	call CheckForUserInterruption
-;	ret c
-;
-;; hip
-;	ld a, SFX_INTRO_HIP
-;	call PlaySound
-;	ld de, IntroNidorinoAnimation1
-;	call AnimateIntroNidorino
-;; hop
-;	ld a, SFX_INTRO_HOP
-;	call PlaySound
-;	ld de, IntroNidorinoAnimation2
-;	call AnimateIntroNidorino
-;	ld c, $1e
-;	call CheckForUserInterruption
-;	ret c
-;
-;; raise
-;	ld b, $4
-;	call IntroCopyTiles
-;	ld a, SFX_INTRO_RAISE
-;	call PlaySound
-;	lb de, 8 / 2, MOVE_GENGAR_LEFT
-;	call IntroMoveMon
-;	ld c, $1e
-;	call CheckForUserInterruption
-;	ret c
-;
-;; slash
-;	ld b, $5
-;	call IntroCopyTiles
-;	ld a, SFX_INTRO_CRASH
-;	call PlaySound
-;	lb de, 16 / 2, MOVE_GENGAR_RIGHT
-;	call IntroMoveMon
-;; hip
-;	ld a, SFX_INTRO_HIP
-;	call PlaySound
-;	ld a, $24
-;	ld [wIntroNidorinoBaseTile], a
-;	ld de, IntroNidorinoAnimation3
-;	call AnimateIntroNidorino
-;	ld c, $1e
-;	call CheckForUserInterruption
-;	ret c
-;
-;	lb de, 8 / 2, MOVE_GENGAR_LEFT
-;	call IntroMoveMon
-;	ld b, $3
-;	call IntroCopyTiles
-;	ld c, $3c
-;	call CheckForUserInterruption
-;	ret c
-;
-;; hip
-;	ld a, SFX_INTRO_HIP
-;	call PlaySound
-;	xor a
-;	ld [wIntroNidorinoBaseTile], a
-;	ld de, IntroNidorinoAnimation4
-;	call AnimateIntroNidorino
-;; hop
-;	ld a, SFX_INTRO_HOP
-;	call PlaySound
-;	ld de, IntroNidorinoAnimation5
-;	call AnimateIntroNidorino
-;	ld c, $14
-;	call CheckForUserInterruption
-;	ret c
-;
-;	ld a, $24
-;	ld [wIntroNidorinoBaseTile], a
-;	ld de, IntroNidorinoAnimation6
-;	call AnimateIntroNidorino
-;	ld c, $1e
-;	call CheckForUserInterruption
-;	ret c
-;
-;; lunge
-;	ld a, SFX_INTRO_LUNGE
-;	call PlaySound
-;	ld a, $48
-;	ld [wIntroNidorinoBaseTile], a
-;	ld de, IntroNidorinoAnimation7
-;	jp AnimateIntroNidorino
+; hop
+	ld a, SFX_INTRO_HOP
+	call PlaySound
+	ld de, IntroNidorinoAnimation2
+	call AnimateIntroNidorino
+	ld c, $a
+	call CheckForUserInterruption
+	ret c
+
+; hip
+	ld a, SFX_INTRO_HIP
+	call PlaySound
+	ld de, IntroNidorinoAnimation1
+	call AnimateIntroNidorino
+; hop
+	ld a, SFX_INTRO_HOP
+	call PlaySound
+	ld de, IntroNidorinoAnimation2
+	call AnimateIntroNidorino
+	ld c, $1e
+	call CheckForUserInterruption
+	ret c
+
+; raise
+	ld b, $4
+	call IntroCopyTiles
+	ld a, SFX_INTRO_RAISE
+	call PlaySound
+	lb de, 8 / 2, MOVE_GENGAR_LEFT
+	call IntroMoveMon
+	ld c, $1e
+	call CheckForUserInterruption
+	ret c
+
+; slash
+	ld b, $5
+	call IntroCopyTiles
+	ld a, SFX_INTRO_CRASH
+	call PlaySound
+	lb de, 16 / 2, MOVE_GENGAR_RIGHT
+	call IntroMoveMon
+; hip
+	ld a, SFX_INTRO_HIP
+	call PlaySound
+	ld a, $24
+	ld [wIntroNidorinoBaseTile], a
+	ld de, IntroNidorinoAnimation3
+	call AnimateIntroNidorino
+	ld c, $1e
+	call CheckForUserInterruption
+	ret c
+
+	lb de, 8 / 2, MOVE_GENGAR_LEFT
+	call IntroMoveMon
+	ld b, $3
+	call IntroCopyTiles
+	ld c, $3c
+	call CheckForUserInterruption
+	ret c
+
+; hip
+	ld a, SFX_INTRO_HIP
+	call PlaySound
+	xor a
+	ld [wIntroNidorinoBaseTile], a
+	ld de, IntroNidorinoAnimation4
+	call AnimateIntroNidorino
+; hop
+	ld a, SFX_INTRO_HOP
+	call PlaySound
+	ld de, IntroNidorinoAnimation5
+	call AnimateIntroNidorino
+	ld c, $14
+	call CheckForUserInterruption
+	ret c
+
+	ld a, $24
+	ld [wIntroNidorinoBaseTile], a
+	ld de, IntroNidorinoAnimation6
+	call AnimateIntroNidorino
+	ld c, $1e
+	call CheckForUserInterruption
+	ret c
+
+; lunge
+	ld a, SFX_INTRO_LUNGE
+	call PlaySound
+	ld a, $48
+	ld [wIntroNidorinoBaseTile], a
+	ld de, IntroNidorinoAnimation7
+	jp AnimateIntroNidorino
 
 AnimateIntroNidorino:
 	ld a, [de]
@@ -374,17 +374,11 @@ IntroNidorinoAnimation1:
 ; This is a sequence of pixel movements for part of the Nidorino animation. This
 ; list describes how Nidorino should hop.
 ; First byte is y movement, second byte is x movement
-	;db  0, 0
-	;db -2, 2
-	;db -1, 2
-	;db  1, 2
-	;db  2, 2
-	;db $50 ; list terminator
-	db  3, 0
-	db -9, 1
+	db  0, 0
+	db -2, 2
 	db -1, 2
-	db  1, 3
-	db  2, 0
+	db  1, 2
+	db  2, 2
 	db $50 ; list terminator
 
 IntroNidorinoAnimation2:

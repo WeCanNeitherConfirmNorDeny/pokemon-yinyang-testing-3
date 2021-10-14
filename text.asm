@@ -59,13 +59,8 @@ _ExclamationText::
 	done
 
 _MyReflectionText::
-	; less cringe:
-	; Looks out window...
-	; Better not dally!
-	text "Looks out window…"
-	line " "
-	para "Better not dally!"
-	line " "
+	text "My reflection!"
+	line "Lookin' good!"
 	done
 
 _BoulderText::
@@ -3174,9 +3169,10 @@ _useGoldBerryText:: ; gold berry
 	line "shines divinely."
 	prompt
 _useOceanBerryText:: ; ocean berry
+	; XXX this needs changing
 	; Your pokemon's the/ ultimate weapon.
-	text "Your #mon's the"
-	line "ultimate weapon."
+	text "Your #mon has"
+	line "MAX EV's."
 	prompt
 _useSnowglobeIcyText:: ; snowglobe - icy
 	; Shook the/ snowglobe!
@@ -3196,9 +3192,12 @@ _useSnowglobeHotText:: ; snowglobe - hot
 	prompt
 _useMirrorText:: ; mirror
 	; Looked into the/ enchanted mirror...
-	; You see magical things.
 	text "Looked into the"
 	line "enchanted mirror…"
+	; The mirror.../ burst into smoke!
+	para "The mirror…"
+	line "burst into smoke!"
+	; You see magical things.
 	para "You see magical"
 	line "things."
 	prompt

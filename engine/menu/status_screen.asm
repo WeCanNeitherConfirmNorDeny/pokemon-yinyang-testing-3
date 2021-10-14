@@ -287,11 +287,12 @@ PrintShinySymbol:
 
 PrintGenderStatusScreen: ; called on status screen
 	; get gender
-	; wGenderTemp = a = species
 	ld de, wLoadedMonGender
 	callba GetMonGender
 	ld a, [wGenderTemp]
-	and a ; GENDERLESS EQU NULL
+	;ld de, wLoadedMonGender
+	;ld a, [de]
+	and a
 	jr z, .noGender
 	dec a
 	jr z, .male

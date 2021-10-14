@@ -25,19 +25,20 @@ _TownMapDescription::
 	line "map that can be"
 	cont "viewed anytime."
 
-	para "It even shows you"
-	line "your present"
-	cont "location in the"
-	cont "region."
+	para "Ascertain your"
+	line "current location"
+	cont "easily."
 	prompt
 
 _BicycleDescription::
-	text "Allows for quick"
-	line "traveling!"
+	;text "Allows for quick"
+	;line "traveling!"
+	text "This 10-speed will"
+	line "take you anywhere!"
 	prompt
 
 _SurfboardDescription::
-	text "..."
+	text "We surf, brah?"
 	prompt
 
 _SafariBallDescription::
@@ -653,7 +654,6 @@ _GoldBerryDescription:: ; gold berry
 	para "Lift #mon from"
 	line "their suffering."
 	prompt
-
 _OceanBerryDescription:: ; ocean berry
 	; A mythical berry/ that is said to...
 	; Endow pokemon with/ the fury of/ 10000 storms.
@@ -664,11 +664,6 @@ _OceanBerryDescription:: ; ocean berry
 	line "the fury of"
 	cont "10000 storms."
 	prompt
-
-_GoHomeDescription::
-	text "Go home."
-	prompt
-
 _SnowglobeDescription:: ; snowglobe
 	; A mysterious/ snowglobe...
 	; A strange energy/ seems to come/ from it.
@@ -679,7 +674,6 @@ _SnowglobeDescription:: ; snowglobe
 	line "seems to come"
 	cont "from it."
 	prompt
-
 _MirrorDescription:: ; mirror
 	; An enchanted/ mirror...
 	; It sometimes shows/ the future.
@@ -688,6 +682,10 @@ _MirrorDescription:: ; mirror
 	
 	para "It sometimes shows"
 	line "the future."
+	prompt
+
+_GoHomeDescription::
+	text "Go home."
 	prompt
 
 _HM01Description::
@@ -1449,7 +1447,7 @@ _CheriBerryDescription_Mart::
 
 _LumBerryDescription_Mart::
 	text "Cures #mon of"
-	line "status conditions."
+	line "status conditions"
 	done
 
 _AcaiBerryDescription_Mart::
@@ -1462,28 +1460,27 @@ _GoldBerryDescription_Mart:: ; gold berry
 	text "Lifts #mon from"
 	line "their suffering."
 	done
-
 _OceanBerryDescription_Mart:: ; ocean berry
 	; Endows a pokemon/ with the fury of/ 10,000 storms.
 	text "Endows a #mon"
 	line "with the fury of"
 	cont "10,000 storms."
 	prompt
+_SnowglobeDescription_Mart:: ; mysterious snowglobe
+	; *not saleable
+	; An ordinary looking/ snowglobe.
+	text "An ordinary looking"
+	line "snowglobe."
+	done
+_MirrorDescription_Mart:: ; enchanted mirror
+	; *not saleable
+	; An ordinary looking mirror.
+	text "An ordinary looking"
+	line "mirror."
+	done
 
 _GoHomeDescription_Mart::
 	text "Go home."
-	done
-
-_SnowglobeDescription_Mart:: ; snowglobe
-	; Mysterious snowglobe.
-	text "Mysterious"
-	line "snowglobe"
-	done
-
-_MirrorDescription_Mart:: ; mirror
-	; Enchanted mirror
-	text "Enchanted"
-	line "mirror"
 	done
 
 _HM01Description_Mart::

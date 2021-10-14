@@ -254,26 +254,35 @@ DisplayIntroNameTextBox:
 
 DefaultNamesPlayer:
 	db   "New Name"
-	next "Red"
+IF DEF(_HARD)
+	next "Yang"
+	next "Gary"
+	next "Suzuki"
+ELSE
+	next "Yin"
 	next "Ash"
 	next "Satoshi"
-	;next "Jack"
+ENDC
 	db   "@"
-	
+
 DefaultNamesGirl:
 	db   "New Name"
 	next "Leaf"
 	next "Ashley"
 	next "Midori"
-	;next "Green"
 	db   "@"
 
 DefaultNamesRival:
 	db   "New Name"
-	next "Blue"
+IF DEF(_HARD)
+	next "Yin"
+	next "Ash"
+	next "Satoshi"
+ELSE
+	next "Yang"
 	next "Gary"
 	next "Suzuki"
-	;next "John"
+ENDC
 	db   "@"
 
 GetDefaultName:
@@ -303,18 +312,28 @@ GetDefaultName:
 DefaultNamesPlayerList:
 	db "New Name@"
 RedDefaultName:
-	db "Red@"
+IF DEF(_HARD)
+	db "Yang@"
+	db "Gary@"
+	db "Suzuki@"
+ELSE
+	db "Yin@"
 	db "Ash@"
 	db "Satoshi@"
-	;db "Jack@"
+ENDC
 
 DefaultNamesRivalList:
 	db "New Name@"
 RivalDefaultName:
-	db "Blue@"
+IF DEF(_HARD)
+	db "Yin@"
+	db "Ash@"
+	db "Satoshi@"
+ELSE
+	db "Yang@"
 	db "Gary@"
 	db "Suzuki@"
-	;db "John@"
+ENDC
 
 DefaultNamesGirlList:
 	db "New Name@"
@@ -322,7 +341,6 @@ LeafDefaultName:
 	db "Leaf@"
 	db "Ashley@"
 	db "Midori@"
-	;db "Green@"
 
 TextTerminator_6b20:
 	db "@"

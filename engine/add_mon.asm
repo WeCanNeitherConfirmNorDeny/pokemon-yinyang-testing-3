@@ -87,16 +87,22 @@ _AddPartyMon:
 	ld a, [hli]
 	ld b, [hl]
 	pop hl
-	;generate gender
+	.generate_gender
+	;hl points to party_struct.Species
 		push hl
-		push af
 		push bc
+		push de
+		ld d, h
+		ld e, l
 		call Random
-		ld bc, wPartyMon1Gender - wPartyMon1
+		ld bc, (wPartyMon1Gender - wPartyMon1@start)
 		add hl, bc
+		;ld [wGenderTemp], a
+		;callba GetMonGender
+		;ld [wGenderTemp], a
 		ld [hl], a ; write
+		pop de
 		pop bc
-		pop af
 		pop hl
 	jr nz, .writeFreshMonData
 
