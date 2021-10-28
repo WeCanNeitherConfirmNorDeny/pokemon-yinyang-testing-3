@@ -28,7 +28,47 @@ DisplayTextBoxID_:
 .coordTableMatch
 	call GetTextBoxIDCoords
 	call GetAddressOfScreenCoords
-	call TextBoxBorder
+; make a switch for window types
+;ref:	MESSAGE_BOX                       EQU $01
+;ref:	FIELD_MOVE_MON_MENU               EQU $04
+;ref:	JP_MOCHIMONO_MENU_TEMPLATE        EQU $05
+;ref:	USE_TOSS_MENU_TEMPLATE            EQU $06
+;ref:	JP_SAVE_MESSAGE_MENU_TEMPLATE     EQU $08
+;ref:	JP_SPEED_OPTIONS_MENU_TEMPLATE    EQU $09
+;ref:	BATTLE_MENU_TEMPLATE              EQU $0b
+;ref:	SWITCH_STATS_CANCEL_MENU_TEMPLATE EQU $0c
+;ref:	LIST_MENU_BOX                     EQU $0d
+;ref:	BUY_SELL_QUIT_MENU_TEMPLATE       EQU $0e
+;ref:	MONEY_BOX_TEMPLATE                EQU $0f
+;ref:	MON_SPRITE_POPUP                  EQU $11
+;ref:	JP_AH_MENU_TEMPLATE               EQU $12
+;ref:	MONEY_BOX                         EQU $13
+;ref:	TWO_OPTION_MENU                   EQU $14
+;ref:	BUY_SELL_QUIT_MENU                EQU $15
+;ref:	JP_POKEDEX_MENU_TEMPLATE          EQU $1a
+;ref:	SAFARI_BATTLE_MENU_TEMPLATE       EQU $1b
+	ld a,[wTextBoxID]
+	cp MESSAGE_BOX
+	jr z,.drawTextBoxBorderless
+	cp FIELD_MOVE_MON_MENU
+	jr z,.drawTextBoxBorderless
+	;cp LIST_MENU_BOX
+	;jr z,.drawTextBoxBorderless
+	cp MON_SPRITE_POPUP
+	jr z,.drawTextBoxBorderless
+	cp MONEY_BOX
+	jr z,.drawTextBoxBorderless
+	cp MONEY_BOX_TEMPLATE
+	jr z,.drawTextBoxBorderless
+	cp BUY_SELL_QUIT_MENU
+	jr z,.drawTextBoxBorderless
+.callTextBoxProcs
+	.drawTextBoxBorder
+		call TextBoxBorder
+		jr .endTextBoxProcs
+	.drawTextBoxBorderless
+		call TextBoxBorderless
+.endTextBoxProcs
 	ret
 .textAndCoordTableMatch
 	call GetTextBoxIDCoords
@@ -141,12 +181,18 @@ TextBoxFunctionTable:
 ; 03: column of lower right corner
 ; 04: row of lower right corner
 TextBoxCoordTable:
-	db MESSAGE_BOX,       0, 12, 19, 17
-	db $03,               0,  0, 19, 14
-	db $07,               0,  0, 11,  6
-	db LIST_MENU_BOX,     4,  2, 19, 12
-	db $10,               7,  0, 19, 17
-	db MON_SPRITE_POPUP,  6,  4, 14, 12
+	;db MESSAGE_BOX,       0, 12, 19, 17
+	;db $03,               0,  0, 19, 14
+	;db $07,               0,  0, 11,  6
+	;db LIST_MENU_BOX,     4,  2, 19, 12
+	;db $10,               7,  0, 19, 17
+	;db MON_SPRITE_POPUP,  6,  4, 14, 12
+	TX_COORDS	MESSAGE_BOX
+	TX_COORDS	ID_3_BOX
+	TX_COORDS	ID_7_BOX
+	TX_COORDS	LIST_MENU_BOX
+	TX_COORDS	ID_10_BOX
+	TX_COORDS	MON_SPRITE_POPUP
 	db $ff ; terminator
 
 ; Format:
@@ -350,9 +396,9 @@ DisplayTwoOptionMenu:
 	ld [wd730], a
 
 ; pointless because both values are overwritten before they are read
-	;xor a
-	;ld [wChosenMenuItem], a
-	;ld [wMenuExitMethod], a
+	xor a
+	ld [wChosenMenuItem], a
+	ld [wMenuExitMethod], a
 
 	ld a, A_BUTTON | B_BUTTON
 	ld [wMenuWatchedKeys], a
@@ -400,7 +446,13 @@ DisplayTwoOptionMenu:
 	call CableClub_TextBoxBorder
 	jr .afterTextBoxBorder
 .notTradeCancelMenu
-	call TextBoxBorder
+.callTextBoxProcs
+	.drawTextBoxBorder
+		call TextBoxBorder
+		jr .endTextBoxProcs
+	.drawTextBoxBorderless
+		call TextBoxBorderless
+.endTextBoxProcs
 .afterTextBoxBorder
 	call UpdateSprites
 	pop hl
@@ -542,6 +594,7 @@ TwoOptionMenuStrings:
 	dw .HealCancelMenu
 	db 4,3,0
 	dw .NoYesMenu
+
 .NoYesMenu
 	db   "No"
 	next "Yes@"
@@ -567,10 +620,13 @@ TwoOptionMenuStrings:
 DisplayFieldMoveMonMenu:
 	xor a
 	ld hl, wFieldMoves
-	ld [hli], a ; wFieldMoves
-	ld [hli], a ; wFieldMoves + 1
-	ld [hli], a ; wFieldMoves + 2
-	ld [hli], a ; wFieldMoves + 3
+	REPT (NUM_MOVES)
+		ld [hli], a ; wFieldMoves
+	ENDR
+	;ld [hli], a ; wFieldMoves
+	;ld [hli], a ; wFieldMoves + 1
+	;ld [hli], a ; wFieldMoves + 2
+	;ld [hli], a ; wFieldMoves + 3
 	ld [hli], a ; wNumFieldMoves
 	ld [hl], 12 ; wFieldMovesLeftmostXCoord
 	call GetMonFieldMoves
@@ -582,7 +638,8 @@ DisplayFieldMoveMonMenu:
 	coord hl, 11, 11
 	ld b, 5
 	ld c, 7
-	call TextBoxBorder
+	;call TextBoxBorder
+	call TextBoxBorderless
 	call UpdateSprites
 	ld a, 12
 	ld [hFieldMoveMonMenuTopMenuItemX], a
@@ -622,7 +679,8 @@ DisplayFieldMoveMonMenu:
 	add hl, de
 	inc b
 
-	call TextBoxBorder
+	;call TextBoxBorder
+	call TextBoxBorderless
 	call UpdateSprites
 
 ; Calculate the position of the first field move name to print.

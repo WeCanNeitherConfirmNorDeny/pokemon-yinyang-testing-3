@@ -345,10 +345,14 @@ StartMenu_Item:
 .choseItem
 ; erase menu cursor (blank each tile in front of an item name)
 	ld a," "
-	Coorda 5, 4
-	Coorda 5, 6
-	Coorda 5, 8
-	Coorda 5, 10
+	;Coorda 5, 4
+	;Coorda 5, 6
+	;Coorda 5, 8
+	;Coorda 5, 10
+	Coorda (LIST_MENU_BOX_X +1), LIST_MENU_BOX_Y +1
+	Coorda (LIST_MENU_BOX_X +1), LIST_MENU_BOX_Y +3
+	Coorda (LIST_MENU_BOX_X +1), LIST_MENU_BOX_Y +5
+	Coorda (LIST_MENU_BOX_X +1), LIST_MENU_BOX_Y +7
 	call PlaceUnfilledArrowMenuCursor
 	xor a
 	ld [wMenuItemToSwap],a

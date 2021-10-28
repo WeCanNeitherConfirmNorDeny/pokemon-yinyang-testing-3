@@ -377,9 +377,12 @@ StatusScreen2:
 	coord hl, 19, 1
 	lb bc, 6, 10
 	call DrawLineBox ; Draws the box around name, HP and status
-	coord hl, 0, 8
-	ld b, 8
-	ld c, 18
+	;coord hl, 0, 8
+	;ld b, 8
+	;ld c, 18
+	box_coords STATUS_SCREEN_MOVES
+	call ClearScreenArea ; Draw move container
+	box_coords STATUS_SCREEN_MOVES
 	call TextBoxBorderless ; Draw move container
 	coord hl, 2, 9
 	ld de, wMovesString

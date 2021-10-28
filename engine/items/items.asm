@@ -125,6 +125,7 @@ ItemUsePtrTable:
 	dw ItemUseVitamin    ; ACAI_BERRY
 	dw ItemUseVitamin    ; GOLD_BERRY
 	dw ItemUseVitamin    ; OCEAN_BERRY
+	dw ItemUseVitamin    ; MOUNTAIN_BERRY
 	dw ItemUseSnowglobe  ; SNOWGLOBE
 	dw ItemUseMirror     ; MIRROR
 	dw UnusableItem      ; GO_HOME
@@ -923,6 +924,8 @@ ItemUseMedicine:
 	jr z,ItemUseMedicine ; if so, force another choice
 .checkItemType
 	ld a,[wcf91]
+	cp a,MOUNTAIN_BERRY
+	jp z,.useVitamin
 	cp a,OCEAN_BERRY
 	jp z,.useVitamin
 	cp a,GOLD_BERRY
@@ -1371,6 +1374,8 @@ ItemUseMedicine:
 	jp z,.useGoldBerry
 	cp a,OCEAN_BERRY
 	jp z,.useOceanBerry
+	cp a,MOUNTAIN_BERRY
+	jp z,.useMountainBerry
 	push hl
 	sub a,HP_UP
 	add a
@@ -1384,7 +1389,11 @@ ItemUseMedicine:
 	ld a,10
 	ld b,a
 	ld a,[hl] ; a = MSB of stat experience of the appropriate stat
-	cp a,100 ; is there already at least 25600 (256 * 100) stat experience?
+	IF DEF(_HARD)
+		cp a,100 ; is there already at least 25600 (256 * 100) stat experience?
+	ELSE
+		cp a,$ff ; is there already at least 25600 (256 * 100) stat experience?
+	ENDC
 	jr nc,.vitaminNoEffect ; if so, vitamins can't add any more
 	add b ; add 2560 (256 * 10) stat experience
 	jr nc,.noCarry3 ; a carry should be impossible here, so this will always jump
@@ -1519,16 +1528,17 @@ ItemUseMedicine:
 	jp RemoveUsedItem
 
 .useGoldBerry ; gold berry
+; shinyizer
 	push hl
 	ld bc, (wPartyMon1DVs - wPartyMon1) ; calc the offset to dvs
 	add hl, bc ; add offset to pointer
 	ld a,[hl] ; a = atk/def dv
 	cp a, ATKDEFDV_SHINY ; is atk/def dv == shiny dv ?Y
-	jr z, .useGoldBerryATKDEFEqualsShiny ; if so, check if the other dv is shiny
+	jr z, .useGoldBerryCheckShiny ; if so, check if the other dv is shiny
 	; cp a,ATKDEFDV_SHINY_FEMALE
-	; jr z,.useGoldBerryATKDEFEqualsShiny
+	; jr z,.useGoldBerryCheckShiny
 	jr .useGoldBerryCopyShinyDVs ; else, copy shiny dvs to our mon
-.useGoldBerryATKDEFEqualsShiny
+.useGoldBerryCheckShiny
 	inc hl
 	ld a,[hl] ; a = spd/spc dv
 	or a
@@ -1542,79 +1552,91 @@ ItemUseMedicine:
 	ld [hli], a ; write atk/def dv
 	ld a, SPDSPCDV_SHINY ; a = shiny dv
 	ld [hl], a ; write spd/spc dv
+	pop hl ; finish
 	ld a,SFX_SHOOTING_STAR
 	call PlaySound ; play sfx :)
+	call .recalculateStats ; update stats
+	call ClearScreen ; fix/prevent screen glitch
 	ld hl, useGoldBerryText
 	call PrintText
-	call GBPalWhiteOut ; fix/prevent screen glitch
-	pop hl
 	jp RemoveUsedItem
+
 .useOceanBerry ; ocean berry
+; max stat exp (EVs)
 	push hl
-	ld bc, (wPartyMon1HPExp - wPartyMon1) ; calc the offset to hp exp
+	ld bc, (wPartyMon1HPExp - wPartyMon1) ; get offset to stat exp
 	add hl, bc ; add offset to pointer
-	push hl
-	ld a, [hli]
-	cp $ff
-	jr nz, .useOceanBerryCopyTopPercentEVs
-	ld a, [hli]
-	cp $ff
-	jr nz, .useOceanBerryCopyTopPercentEVs
-	ld a, [hli]
-	cp $ff
-	jr nz, .useOceanBerryCopyTopPercentEVs
-	ld a, [hli]
-	cp $ff
-	jr nz, .useOceanBerryCopyTopPercentEVs
-	ld a, [hli]
-	cp $ff
-	jr nz, .useOceanBerryCopyTopPercentEVs
-	ld a, [hli]
-	cp $ff
-	jr nz, .useOceanBerryCopyTopPercentEVs
-	ld a, [hli]
-	cp $ff
-	jr nz, .useOceanBerryCopyTopPercentEVs
-	ld a, [hli]
-	cp $ff
-	jr nz, .useOceanBerryCopyTopPercentEVs
-	ld a, [hli]
-	cp $ff
-	jr nz, .useOceanBerryCopyTopPercentEVs
-	ld a, [hl]
-	cp $ff
-	jr nz, .useOceanBerryCopyTopPercentEVs
-	; else fall through
+	ld b, h ; backup pointer
+	ld c, l
+	; check if EVs are already maxed
+	REPT (2*NUM_STATS)
+		ld a, [hli]
+		cp $ff
+		jr nz, .useOceanBerryCopyTopPercentEVs
+	ENDR
+	; else no effect
 	; if we're here, every single byte == 0xff
-	pop hl ; fix stack
 	jp .vitaminNoEffect ; show no effect msg
 .useOceanBerryCopyTopPercentEVs
-	pop hl ; set pointer
+	ld h, b ; set pointer
+	ld l, c
 	ld a, $ff ; set source
-	; copy a 10x
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
+	; copy new EV's
+	REPT ((2*NUM_STATS)-1)
+		ld [hli], a
+	ENDR
 	ld [hl], a
-	; finish
 	ld a,SFX_SHOOTING_STAR
 	call PlaySound ; play sfx :)
+	call .recalculateStats ; update stats
+	call ClearScreen ; fix/prevent screen glitch
 	ld hl, useOceanBerryText
 	call PrintText
-	;call GBPalWhiteOut ; fix/prevent screen glitch
-	pop hl
+	pop hl ; finish
 	jp RemoveUsedItem
+
+.useMountainBerry ; mountain berry
+; max dv's (IV's)
+	push hl
+	ld bc, (wPartyMon1DVs - wPartyMon1) ; calc the offset to DVs
+	add hl, bc ; add offset to pointer
+	ld b, h ; backup pointer
+	ld c, l
+	; check if IVs are already maxed
+	ld a, [hli]
+	cp $ff
+	jr nz, .useMountainBerryCopyTopPercentIVs
+	ld a, [hl]
+	cp $ff
+	jr nz, .useMountainBerryCopyTopPercentIVs
+	; else no effect
+	; if we're here, every single byte == 0xff
+	;pop hl ; fix stack 
+	jp .vitaminNoEffect ; show no effect msg
+.useMountainBerryCopyTopPercentIVs
+	ld h, b ; set pointer
+	ld l, c
+	ld a, $ff ; set source
+	; copy new IV's
+	ld [hli], a
+	ld [hl], a
+	pop hl ; finish
+	ld a,SFX_SHOOTING_STAR
+	call PlaySound ; play sfx :)
+	call .recalculateStats ; update stats
+	call ClearScreen ; fix/prevent screen glitch
+	ld hl, useMountainBerryText
+	call PrintText
+	jp RemoveUsedItem
+
 useGoldBerryText:
 	TX_FAR _useGoldBerryText
 	db "@"
 useOceanBerryText:
 	TX_FAR _useOceanBerryText
+	db "@"
+useMountainBerryText:
+	TX_FAR _useMountainBerryText
 	db "@"
 
 VitaminStatRoseText:
@@ -2310,13 +2332,13 @@ useSnowglobeHotText:
 
 ItemUseMirror: ; mirror
 ; brifly glitches when it switches the tileset
+; to avoid recursion, choose your dest hit a, then start hitting b
 	ld a,[wIsInBattle]
 	and a
 	jp nz,ItemUseNotTime
 	ld hl,useMirrorText ; show message
 	call PrintText
-	push bc
-	call RemoveUsedItem
+	;call RemoveUsedItem
 	; open fly map with all zones active
 	push bc
 	ld hl, wKantoTownVisitedFlag
@@ -2327,16 +2349,22 @@ ItemUseMirror: ; mirror
 	push bc
 	ld a, $ff
 	ld [hl+], a
-	ld [hl-], a
+	ld [hl], a
 	callba ChooseFlyDestination
+	;call GBPalWhiteOut
 	; reset fly zones to how they were
+	ld hl, wKantoTownVisitedFlag
 	pop bc
 	ld a, b
 	ld [hl+], a
 	ld a, c
 	ld [hl], a
 	pop bc
-	call GBPalWhiteOut
+	;call DisableLCD
+	;call EnableLCD
+	;call GBPalBlackOut
+	call ClearScreen
+	call RemoveUsedItem
 	jp CloseStartMenu
 useMirrorText:
 	TX_FAR _useMirrorText
@@ -2457,7 +2485,11 @@ ItemUsePPRestore:
 	jr z,.fullyRestorePP
 	ld a,[hl] ; move PP
 	and a,%00111111 ; lower 6 bit bits store current PP
-	cp b ; does current PP equal max PP?
+	IF DEF(_HARD)
+		cp b ; does current PP equal max PP?
+	ELSE
+		or a ; nop/clear z flag
+	ENDC
 	ret z ; if so, return
 	add a,10 ; increase current PP by 10
 ; b holds the max PP amount and b will hold the new PP amount.

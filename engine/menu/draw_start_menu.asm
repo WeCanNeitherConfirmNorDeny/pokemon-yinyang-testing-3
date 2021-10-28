@@ -13,16 +13,16 @@ DrawStartMenu:
 	;coord hl, 10, 0
 	;ld b,$0c
 	;ld c,$08
-	coord hl, 8, 0	; coordinates
-	ld b,$10 	; y length
-	ld c,$0b 	; x length
+	;coord hl, START_MENU_X, START_MENU_Y	; coordinates
+	;ld b,START_MENU_HEIGHT 	; y length
+	;ld c,START_MENU_WIDTH 	; x length
+	box_coords START_MENU
 .drawTextBoxBorder
 	;call TextBoxBorder
 	call TextBoxBorderless
 	ld a,D_DOWN | D_UP | START | B_BUTTON | A_BUTTON
 	ld [wMenuWatchedKeys],a
 	ld a,$02
-	;ld a,$02 - 1
 	ld [wTopMenuItemY],a ; Y position of first menu choice
 	ld a,$0b - 2
 	ld [wTopMenuItemX],a ; X position of first menu choice

@@ -1791,30 +1791,29 @@ LoadBattleMonFromParty:
 	ld bc, wPartyMon2 - wPartyMon1
 	ld hl, wPartyMon1Species
 	call AddNTimes ; hl points to selected party mon
-	ld de, wBattleMonSpecies
-	ld bc, wBattleMonDVs - wBattleMonSpecies
-	call CopyData
-	ld bc, wPartyMon1DVs - wPartyMon1OTID
-	add hl, bc
-	ld de, wBattleMonDVs
-	ld bc, NUM_DVS
-	call CopyData
-	ld de, wBattleMonPP
-	ld bc, NUM_MOVES
-	call CopyData
-	ld de, wBattleMonLevel
-	ld bc, wBattleMonPP - wBattleMonLevel
-	call CopyData
-	ld de, wBattleMonGender
-	ld bc, wBattleMonGender - wBattleMonLevel
-	add hl, bc
-	ld bc, SIZE_GENDER
-	call CopyData
-
 	;ld de, wBattleMonSpecies
-	;;ld bc, (wBattleMon@end -1) - wBattleMonSpecies
-	;ld bc, (wBattleMon@end -1) - wBattleMonSpecies
+	;ld bc, wBattleMonDVs - wBattleMonSpecies
 	;call CopyData
+	;ld bc, wPartyMon1DVs - wPartyMon1OTID
+	;add hl, bc
+	;ld de, wBattleMonDVs
+	;ld bc, NUM_DVS
+	;call CopyData
+	;ld de, wBattleMonPP
+	;ld bc, NUM_MOVES
+	;call CopyData
+	;ld de, wBattleMonLevel
+	;ld bc, wBattleMonPP - wBattleMonLevel
+	;call CopyData
+	;ld de, wBattleMonGender
+	;ld bc, wBattleMonGender - wBattleMonLevel
+	;add hl, bc
+	;ld bc, SIZE_GENDER
+	;call CopyData
+
+	ld de, wBattleMonSpecies
+	ld bc, (wBattleMon@end -1) - wBattleMonSpecies
+	call CopyData
 
 	ld a, [wBattleMonSpecies2]
 	ld [wd0b5], a
@@ -1827,7 +1826,7 @@ LoadBattleMonFromParty:
 	call CopyData
 	ld hl, wBattleMonLevel
 	ld de, wPlayerMonUnmodifiedLevel ; block of memory used for unmodified stats
-	ld bc, 1 + (NUM_STATS * 2)
+	ld bc, 1 + NUM_STATS * 2
 	call CopyData
 
 	call ApplyBurnAndParalysisPenaltiesToPlayer
@@ -1847,29 +1846,29 @@ LoadEnemyMonFromParty:
 	ld bc, wEnemyMon2 - wEnemyMon1
 	ld hl, wEnemyMons
 	call AddNTimes
-	ld de, wEnemyMonSpecies
-	ld bc, wEnemyMonDVs - wEnemyMonSpecies
-	call CopyData
-	ld bc, wEnemyMon1DVs - wEnemyMon1OTID
-	add hl, bc
-	ld de, wEnemyMonDVs
-	ld bc, NUM_DVS
-	call CopyData
-	ld de, wEnemyMonPP
-	ld bc, NUM_MOVES
-	call CopyData
-	ld de, wEnemyMonLevel
-	ld bc, wEnemyMonPP - wEnemyMonLevel
-	call CopyData
-	ld de, wEnemyMonGender
-	ld bc, wEnemyMonGender - wEnemyMonLevel
-	add hl, bc
-	ld bc, SIZE_GENDER
-	call CopyData
-
 	;ld de, wEnemyMonSpecies
-	;ld bc, (wEnemyMon@end -1) - wEnemyMonSpecies
+	;ld bc, wEnemyMonDVs - wEnemyMonSpecies
 	;call CopyData
+	;ld bc, wEnemyMon1DVs - wEnemyMon1OTID
+	;add hl, bc
+	;ld de, wEnemyMonDVs
+	;ld bc, NUM_DVS
+	;call CopyData
+	;ld de, wEnemyMonPP
+	;ld bc, NUM_MOVES
+	;call CopyData
+	;ld de, wEnemyMonLevel
+	;ld bc, wEnemyMonPP - wEnemyMonLevel
+	;call CopyData
+	;ld de, wEnemyMonGender
+	;ld bc, wEnemyMonGender - wEnemyMonLevel
+	;add hl, bc
+	;ld bc, SIZE_GENDER
+	;call CopyData
+
+	ld de, wEnemyMonSpecies
+	ld bc, (wEnemyMon@end -1) - wEnemyMonSpecies
+	call CopyData
 
 	ld a, [wEnemyMonSpecies]
 	ld [wd0b5], a
@@ -1882,8 +1881,7 @@ LoadEnemyMonFromParty:
 	call CopyData
 	ld hl, wEnemyMonLevel
 	ld de, wEnemyMonUnmodifiedLevel ; block of memory used for unmodified stats
-	;ld bc, 1 + NUM_STATS * 2
-	ld bc, 1 + (NUM_STATS * 2)
+	ld bc, 1 + NUM_STATS * 2
 	call CopyData
 
 	call ApplyBurnAndParalysisPenaltiesToEnemy
@@ -1896,7 +1894,7 @@ LoadEnemyMonFromParty:
 	inc de
 	dec b
 	jr nz, .copyBaseStatsLoop
-	ld a, $7 ; default stat modifier
+	ld a, DEFAULT_NUM_STAT_MODS ; default stat modifier
 	ld b, NUM_STAT_MODS
 	ld hl, wEnemyMonStatMods
 .statModLoop
@@ -9293,6 +9291,7 @@ PhysicalSpecialSplit:
 PrintEnemyMonGender: ; called during battle
 	; get gender
 	ld a, [wEnemyMonGender]
+	ld [wGenderTemp], a
 	call PrintGenderCommon
 	coord hl, 9, 1
 	ld [hl], a
@@ -9301,6 +9300,7 @@ PrintEnemyMonGender: ; called during battle
 PrintPlayerMonGender: ; called during battle
 	; get gender
 	ld a, [wBattleMonGender]
+	ld [wGenderTemp], a
 	call PrintGenderCommon
 	coord hl, 17, 8
 	ld [hl], a
@@ -9309,6 +9309,7 @@ PrintPlayerMonGender: ; called during battle
 PrintGenderCommon: ; used by both routines
 	;ld [wGenderTemp], a
 	;callba GetMonGender
+	ld a, [wGenderTemp]
 	and a
 	jr z, .noGender
 	dec a
