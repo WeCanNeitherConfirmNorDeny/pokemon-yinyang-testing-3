@@ -22,8 +22,6 @@ RedsHouse2FScript1:
 
 RedsHouse2FTextPointers:
 	dw RedsHouse2FGetNinetales
-	dw RedsHouse2FGetPonyta
-	dw RedsHouse2FGetVulpix
 
 RedsHouse2FGetNinetales:
 	TX_ASM
@@ -36,24 +34,3 @@ RedsHouse2FGetNinetales:
 .noCarry
 	jp TextScriptEnd
 
-RedsHouse2FGetPonyta:
-	TX_ASM
-	lb bc, PONYTA, 50
-	call GivePokemon
-	jr nc, .noCarry
-	ld a, HS_REDS_HOUSE_2F_PONYTA
-	ld [wMissableObjectIndex], a
-	predef HideObject
-.noCarry
-	jp TextScriptEnd
-
-RedsHouse2FGetVulpix:
-	TX_ASM
-	lb bc, VULPIX, 50
-	call GivePokemon
-	jr nc, .noCarry
-	ld a, HS_REDS_HOUSE_2F_VULPIX
-	ld [wMissableObjectIndex], a
-	predef HideObject
-.noCarry
-	jp TextScriptEnd

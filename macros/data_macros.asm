@@ -245,3 +245,30 @@ rept _NARG +- 1
 	shift
 endr
 endm
+
+
+; textbox coord macro
+;\1 = textbox id
+TX_COORDS: MACRO
+	db \1, \
+	(\1_X), \
+	(\1_Y), \
+	(\1_WIDTH), \
+	(\1_HEIGHT)
+ENDM
+
+_XY: MACRO
+	(\1_X), (\1_Y)
+ENDM
+_YX: MACRO
+	(\1_Y), (\1_X)
+ENDM
+
+; set up args for call to TextBoxBorder
+; assumes required values are defined in existing constants
+;\1 = constant prefix
+box_coords: MACRO
+	coord hl, (\1_X), (\1_Y)
+	ld b, (\1_HEIGHT)
+	ld c, (\1_WIDTH)
+ENDM
