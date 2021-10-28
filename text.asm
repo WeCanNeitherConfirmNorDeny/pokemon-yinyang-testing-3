@@ -1,5 +1,10 @@
 INCLUDE "charmap.asm"
 INCLUDE "constants/text_constants.asm"
+
+IF DEF(_BLUE)
+_HARD EQU 1
+ENDC
+
 TEXT_1  EQU $20
 TEXT_2  EQU TEXT_1 + 1
 TEXT_3  EQU TEXT_2 + 1
@@ -1811,7 +1816,11 @@ _LinkCanceledText::
 	line "canceled."
 	done
 
-INCLUDE "text/oakspeech.asm"
+IF DEF(_HARD)
+	INCLUDE "text/oakspeech_hard.asm"
+ELSE
+	INCLUDE "text/oakspeech.asm"
+ENDC
 
 _DoYouWantToNicknameText::
 	text "Do you want to"

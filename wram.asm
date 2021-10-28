@@ -6,12 +6,18 @@ flag_array: MACRO
 ENDM
 
 ;;;;;;;;;;;;;;;
+; lots of aliases in play now
+; while using any ...@end labels
+; -- keep in mind...
+; to point to the last byte of the element you need to access (element@end - 1)
+;;;;;;;;;;;;;;;
 ; wDayCareMon:: box_struct wDayCareMon
 ; wDayCareMon2:: box_struct wDayCareMon2
 ; wBoxMon1:: box_struct wBoxMon1
 ; wBoxMon2:: ds box_struct_length * (MONS_PER_BOX + -1)
 _box_struct_t: MACRO
 \1Species::	ds SIZE_SPECIES
+\1Hp::
 \1HP::		ds SIZE_HP
 \1PartyPos::
 \1BoxLevel::	ds SIZE_BOXLEVEL
@@ -19,24 +25,35 @@ _box_struct_t: MACRO
 \1Types::
 \1Type1::	ds SIZE_TYPE1
 \1Type2::	ds SIZE_TYPE2
+\1Types@end::
 \1CatchRate_NotReferenced::
 \1CatchRate::	ds SIZE_CATCHRATE
 \1Moves::	ds SIZE_MOVES
+\1Moves@end::
+\1Otid::
 \1OTID::	ds SIZE_OTID
 \1Exp::		ds SIZE_EXP
+\1Exp@end::
 \1EVs::
 \1StatExp::
 \1HPExp::	ds SIZE_HPEXP
-\1AttackExp::	ds SIZE_ATTACKEXP
-\1DefenseExp::	ds SIZE_DEFENSEEXP
-\1SpeedExp::	ds SIZE_SPEEDEXP
-\1SpecialExp::	ds SIZE_SPECIALEXP
+\1AttackExp::	ds SIZE_ATKEXP
+\1DefenseExp::	ds SIZE_DEFEXP
+\1SpeedExp::	ds SIZE_SPDEXP
+\1SpecialExp::	ds SIZE_SPCEXP
+\1StatExp@end::
+\1EVs@end::
 \1IVs::
 \1DVs::
 \1AtkDefDV::	ds SIZE_ATKDEFDV
 \1SpdSpcDV::	ds SIZE_SPDSPCDV
+\1DVs@end::
+\1IVs@end::
 \1PP::		ds SIZE_PP
+\1PP@end::
+;\1Gender::	ds SIZE_GENDER
 ENDM
+;;;;;;;;;;;;;;;
 box_struct: MACRO
 \1@start::
 	_box_struct_t \1
@@ -77,32 +94,25 @@ ENDM
 ; wEnemyMon:: battle_struct wEnemyMon
 battle_struct: MACRO
 \1@start::
-	_box_struct_t \1
-;\1Species::	ds SIZE_SPECIES
-;\1HP::		ds SIZE_HP
-;\1PartyPos::
-;\1BoxLevel::	ds SIZE_BOXLEVEL
-;\1Status::	ds SIZE_STATUS
-;\1Types::
-;\1Type1::	ds SIZE_TYPE1
-;\1Type2::	ds SIZE_TYPE2
-;\1CatchRate_NotReferenced::
-;\1CatchRate::	ds SIZE_CATCHRATE
-;\1Moves::	ds SIZE_MOVES
-;\1PP::		ds SIZE_PP
-;\1IVs::
-;\1DVs::
-;\1AtkDefDV::	ds SIZE_ATKDEFDV
-;\1SpdSpcDV::	ds SIZE_SPDSPCDV
-;\1EVs::				; HAX
-;\1StatExp::				; HAX
-;\1HPExp::	ds SIZE_HPEXP		; HAX
-;\1AttackExp::	ds SIZE_ATTACKEXP	; HAX
-;\1DefenseExp::	ds SIZE_DEFENSEEXP	; HAX
-;\1SpeedExp::	ds SIZE_SPEEDEXP	; HAX
-;\1SpecialExp::	ds SIZE_SPECIALEXP	; HAX
-;\1Exp::		ds SIZE_EXP	; HAX
-;\1OTID::	ds SIZE_OTID		; HAX
+;	_box_struct_t \1
+\1Species::	ds SIZE_SPECIES
+\1Hp::
+\1HP::		ds SIZE_HP
+\1PartyPos::
+\1BoxLevel::	ds SIZE_BOXLEVEL
+\1Status::	ds SIZE_STATUS
+\1Types::
+\1Type1::	ds SIZE_TYPE1
+\1Type2::	ds SIZE_TYPE2
+\1Types@end::
+\1CatchRate_NotReferenced::
+\1CatchRate::	ds SIZE_CATCHRATE
+\1Moves::	ds SIZE_MOVES
+\1Moves@end::
+\1DVs::
+\1AtkDefDV::	ds SIZE_ATKDEFDV
+\1SpdSpcDV::	ds SIZE_SPDSPCDV
+\1DVs@end::
 \1Level::	ds SIZE_LEVEL
 \1Stats::
 \1MaxHP::	ds SIZE_MAXHP
@@ -110,7 +120,9 @@ battle_struct: MACRO
 \1Defense::	ds SIZE_DEFENSE
 \1Speed::	ds SIZE_SPEED
 \1Special::	ds SIZE_SPECIAL
-\1Gender:: ds SIZE_GENDER
+\1PP::		ds SIZE_PP
+\1PP@end::
+\1Gender::	ds SIZE_GENDER
 \1@end::
 ENDM
 
@@ -181,8 +193,9 @@ ENDM
 ; wMonH:: header_struct wMonH
 header_struct: MACRO
 \1eader::	;wMonHeader::
-\1Index::	ds SIZE_HEADER_INDEX
+\1Index::	ds SIZE_HEADER_INDEX ; the pokedex index value
 \1BaseStats::
+\1BaseHP::	ds SIZE_BASE_HP
 \1BaseAttack::	ds SIZE_BASE_ATTACK
 \1BaseDefense::	ds SIZE_BASE_DEFENSE
 \1BaseSpeed::	ds SIZE_BASE_SPEED
@@ -568,6 +581,7 @@ wMenuCursorLocation:: ; cc30
 
 ; unused?
 wUnused_WORD::
+wOptionsPokemonObeyCursorX::
 	ds 2
 
 wMenuJoypadPollCount:: ; cc34
@@ -594,6 +608,7 @@ wTradeCenterPointerTableIndex:: ; cc38
 	ds 1
 
 ; unused?
+wOptionsMetaCursorX::
 wUnused_BYTE::
 	ds 1
 
@@ -1426,7 +1441,7 @@ wNumMovesMinusOne:: ; cd6c
 ; FormatMovesString stores the number of moves minus one here
 	ds 1
 
-wcd6d:: ds 4 ; buffer for various data
+wcd6d:: ds (NUM_MOVES) ; buffer for various data
 
 wStatusScreenCurrentPP:: ; cd71
 ; temp variable used to print a move's current PP on the status screen
@@ -1831,7 +1846,7 @@ wTrainerName:: ; d04a
 ; 13 bytes for the letters of the opposing trainer
 ; the name is terminated with $50 with possible
 ; unused trailing letters
-	ds 13
+	ds ENEMY_NAME_LENGTH
 
 wIsInBattle:: ; d057
 ; lost battle, this is -1
@@ -2844,12 +2859,6 @@ wUnusedD5A3:: ; d5a3
 wPlayerCoins:: ; d5a4
 	ds 2 ; BCD
 
-wMissableObjectFlags:: ; d5a6
-; bit array of missable objects. set = removed
-; TODO: will be removed once hide/show uses normal flags with the Gen 2 style system
-	flag_array $E7
-wMissableObjectFlagsEnd::
-
 wd5cd:: ds 1 ; temp copy of c1x2 (sprite facing/anim)
 
 wMissableObjectList:: ; d5ce
@@ -3098,9 +3107,6 @@ wSlidingTilePuzzleHeaderEnd::
 ; unused bytes originally allocated with game progress flags
 	ds 10
 
-
-
-
 ; Battle Tower's Trainer Class points here for team data
 ; Only has room for 1 trainer entry, but it is randomized
 ; Structure will be loaded by Battle Tower scripts
@@ -3200,7 +3206,7 @@ wWalkBikeSurfState:: ; d700
 wKantoTownVisitedFlag:: ; d70b
 	ds 2
 
-;wJohtoTownVisitedFlag::
+wJohtoTownVisitedFlag::
 ;	ds 2
 
 wSafariSteps:: ; d70d
@@ -3513,13 +3519,11 @@ wDayCareMonName:: ds NAME_LENGTH
 wDayCareMonOT::   ds NAME_LENGTH
 
 wDayCareMon:: box_struct wDayCareMon ; Lady
-;wDayCareMonGender::ds SIZE_GENDER
 
 wDayCareMon2Name:: ds NAME_LENGTH
 wDayCareMon2OT::   ds NAME_LENGTH
 
 wDayCareMon2:: box_struct wDayCareMon2 ; Man
-;wDayCareMon2Gender::ds SIZE_GENDER
 
 wMainDataEnd::
 
@@ -3530,9 +3534,7 @@ wBoxSpecies:: ds MONS_PER_BOX + 1
 
 wBoxMons::
 wBoxMon1:: box_struct wBoxMon1 ; da96
-;wBoxMon1Gender::ds SIZE_GENDER
 wBoxMon2:: ds (box_struct_length -1) * (MONS_PER_BOX + -1) ; dab7
-;wBoxMon2:: ds (box_struct_length +(SIZE_GENDER)) * (MONS_PER_BOX + -1) ; dab7
 
 wBoxMonOT::    ds NAME_LENGTH * MONS_PER_BOX ; dd2a
 wBoxMonNicks:: ds NAME_LENGTH * MONS_PER_BOX ; de06
@@ -3554,7 +3556,6 @@ wEXPBarKeepFullFlag:: ds 1
 SECTION "Battle Mons", WRAM0
 ; LoadMonData copies mon data here
 wLoadedMon:: party_struct wLoadedMon ; cf98
-;wLoadedMonGender::ds SIZE_GENDER
 
 wPartyDataStart::
 wPartyCount::	ds 1 ; d163
@@ -3563,64 +3564,60 @@ wPartyEnd::	ds 1 ; d16a
 
 wPartyMons::
 wPartyMon1:: party_struct wPartyMon1 ; d16b
-;wPartyMon1Gender::ds SIZE_GENDER
 wPartyMon2:: party_struct wPartyMon2 ; d197
-;wPartyMon2Gender::ds SIZE_GENDER
 wPartyMon3:: party_struct wPartyMon3 ; d1c3
-;wPartyMon3Gender::ds SIZE_GENDER
 wPartyMon4:: party_struct wPartyMon4 ; d1ef
-;wPartyMon4Gender::ds SIZE_GENDER
 wPartyMon5:: party_struct wPartyMon5 ; d21b
-;wPartyMon5Gender::ds SIZE_GENDER
 wPartyMon6:: party_struct wPartyMon6 ; d247
-;wPartyMon6Gender::ds SIZE_GENDER
 ;IF PARTY_LENGTH > 6
 ;	wPartyMon7:: party_struct wPartyMon7
-;	wPartyMon7Gender::ds SIZE_GENDER
 ;	IF PARTY_LENGTH > 7
 ;		wPartyMon8:: party_struct wPartyMon8
-;		wPartyMon8Gender::ds SIZE_GENDER
 ;	ENDC
 ;ENDC
 
 wPartyMonOT::    ds NAME_LENGTH * PARTY_LENGTH ; d273
 wPartyMonNicks:: ds NAME_LENGTH * PARTY_LENGTH ; d2b5
+;wPartyMonNicks::
+;	dw wPartyMon1Nick
+;	dw wPartyMon2Nick
+;	dw wPartyMon3Nick
+;	dw wPartyMon4Nick
+;	dw wPartyMon5Nick
+;	dw wPartyMon6Nick
 
 wPartyDataEnd::
 
+wEnemyMon:: party_struct wEnemyMon
 wEnemyMonNick:: ds NAME_LENGTH ; cfda
-wEnemyMon:: battle_struct wEnemyMon
-;wEnemyMonGender::ds SIZE_GENDER
 
+wBattleMon:: party_struct wBattleMon ; d014
 wBattleMonNick:: ds NAME_LENGTH ; d009
-wBattleMon:: battle_struct wBattleMon ; d014
-;wBattleMonGender::ds SIZE_GENDER
 
 wEnemyMons:: ; d8c4
 wEnemyMon1:: party_struct wEnemyMon1
-;wEnemyMon1Gender::ds SIZE_GENDER
 wEnemyMon2:: party_struct wEnemyMon2
-;wEnemyMon2Gender::ds SIZE_GENDER
 wEnemyMon3:: party_struct wEnemyMon3
-;wEnemyMon3Gender::ds SIZE_GENDER
 wEnemyMon4:: party_struct wEnemyMon4
-;wEnemyMon4Gender::ds SIZE_GENDER
 wEnemyMon5:: party_struct wEnemyMon5
-;wEnemyMon5Gender::ds SIZE_GENDER
 wEnemyMon6:: party_struct wEnemyMon6
-;wEnemyMon6Gender::ds SIZE_GENDER
 ;IF PARTY_LENGTH > 6
 ;	wEnemyMon7:: party_struct wEnemyMon7
-;	wEnemyMon7Gender::ds SIZE_GENDER
 ;	IF PARTY_LENGTH > 7
 ;		wEnemyMon8:: party_struct wEnemyMon8
-;		wEnemyMon8Gender::ds SIZE_GENDER
 ;	ENDC
 ;ENDC
 
 wEnemyMonOT::    ds NAME_LENGTH * PARTY_LENGTH
 wEnemyMonNicks:: ds NAME_LENGTH * PARTY_LENGTH
 wEnemyMonsEnd::
+
+wMissableObjectFlags:: ; d5a6
+; bit array of missable objects. set = removed
+; TODO: will be removed once hide/show uses normal flags with the Gen 2 style system
+	;flag_array $E7
+	flag_array $E9
+wMissableObjectFlagsEnd::
 
 SECTION "Stack", WRAMX[$df00], BANK[1]
 	ds $ff

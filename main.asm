@@ -186,7 +186,11 @@ INCLUDE "engine/overworld/is_player_just_outside_map.asm"
 INCLUDE "engine/menu/status_screen.asm"
 INCLUDE "engine/menu/party_menu.asm"
 
-RedPicFront::  INCBIN "pic/trainer/red.pic"
+IF DEF(_HARD)
+	RedPicFront::        INCBIN "pic/trainer/rival1.pic"
+ELSE
+	RedPicFront::  INCBIN "pic/trainer/red.pic"
+ENDC
 LeafPicFront:: INCBIN "pic/trainer/leaf.pic"
 ShrinkPic1::   INCBIN "pic/trainer/shrink1.pic"
 ShrinkPic2::   INCBIN "pic/trainer/shrink2.pic"
@@ -209,11 +213,17 @@ EXPBarShinySparkleGraphicsEnd:
 
 SECTION "NPC Sprites 2", ROMX, BANK[NPC_SPRITES_2]
 
-RedCyclingSprite:     INCBIN "gfx/sprites/cycling.2bpp"
-RedSprite:            INCBIN "gfx/sprites/red.2bpp"
+IF DEF(_HARD)
+	RedCyclingSprite:     INCBIN "gfx/sprites/bluecycling.2bpp"
+	RedSprite:            INCBIN "gfx/sprites/blue.2bpp"
+	BlueSprite:           INCBIN "gfx/sprites/red.2bpp"
+ELSE
+	RedCyclingSprite:     INCBIN "gfx/sprites/cycling.2bpp"
+	RedSprite:            INCBIN "gfx/sprites/red.2bpp"
+	BlueSprite:           INCBIN "gfx/sprites/blue.2bpp"
+ENDC
 LeafSprite:           INCBIN "gfx/sprites/leaf.2bpp"
 LeafCyclingSprite:    INCBIN "gfx/sprites/leafcycling.2bpp"
-BlueSprite:           INCBIN "gfx/sprites/blue.2bpp"
 OakSprite:            INCBIN "gfx/sprites/oak.2bpp"
 BugCatcherSprite:     INCBIN "gfx/sprites/bug_catcher.2bpp"
 LassSprite:           INCBIN "gfx/sprites/lass.2bpp"
@@ -1181,7 +1191,11 @@ JugglerPic::       INCBIN "pic/trainer/juggler.pic"
 TamerPic::         INCBIN "pic/trainer/tamer.pic"
 BirdKeeperPic::    INCBIN "pic/trainer/birdkeeper.pic"
 BlackbeltPic::     INCBIN "pic/trainer/blackbelt.pic"
-Rival1Pic::        INCBIN "pic/trainer/rival1.pic"
+IF DEF(_HARD)
+	Rival1Pic::        INCBIN "pic/trainer/red.pic"
+ELSE
+	Rival1Pic::        INCBIN "pic/trainer/rival1.pic"
+ENDC
 SwimmerFPic::      INCBIN "pic/trainer/swimmerf.pic"
 RocketFPic::       INCBIN "pic/trainer/rocketf.pic"
 ScientistPic::     INCBIN "pic/trainer/scientist.pic"
@@ -2275,6 +2289,12 @@ TradingAnimationGraphics2End:
 
 MissingnoPic::          INCBIN "pic/other/missingno.pic"
 
+;IF DEF(_HARD)
+; XXX todo: make a decent pic
+;	RedPicBack::            INCBIN "pic/trainer/blueb.pic"
+;ELSE
+;	RedPicBack::            INCBIN "pic/trainer/redb.pic"
+;ENDC
 RedPicBack::            INCBIN "pic/trainer/redb.pic"
 LeafPicBack::           INCBIN "pic/trainer/leafb.pic"
 OldManPic::             INCBIN "pic/trainer/oldman.pic"

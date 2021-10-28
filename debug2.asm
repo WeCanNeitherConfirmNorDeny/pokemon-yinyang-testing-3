@@ -45,6 +45,8 @@ start_items:
 	call GiveItem ; surfboard
 	ld b,TOWN_MAP
 	call GiveItem ; town map
+	ld b,BICYCLE
+	call GiveItem ; bicycle
 
 	; hm's
 	ld b, (HM_01 -1)
@@ -57,46 +59,3 @@ start_items:
 
 	ret
 
-;;;;;;;;;;;;;;;
-;
-; skip intro
-skip_intro:
-	xor a
-	and a
-	jr nz, .noz
-	ld [wPlayerGender], a ; male
-	ld hl, StarterOT_Ninten ; name -> red=yin and blue=yang
-	ld de, wPlayerName
-	ld bc, NAME_LENGTH
-	call CopyData ; write player name
-	jr :+
-.noz
-	ld [wPlayerGender], a ; female
-	ld hl, StarterOT_Leaf ; name -> leaf
-	ld de, wPlayerName
-	ld bc, NAME_LENGTH
-	call CopyData ; write player name
-:
-	ld hl, wExtraFlags
-	set 2,[hl] ; monsters will obey
-	call GBFadeOutToBlack
-	call GetRivalPalID ; HAX
-	ld hl, StarterOT_Sony ; rival -> red=yin and blue=yang
-	ld de, wRivalName
-	ld bc, NAME_LENGTH
-	call CopyData ; write rival name
-	ret
-
-IF DEF(_HARD)
-StarterOT_Ninten:
-	db "Yang@"
-StarterOT_Sony:
-	db "Yin@"
-ELSE
-StarterOT_Ninten:
-	db "Yin@"
-StarterOT_Sony:
-	db "Yang@"
-ENDC
-StarterOT_Leaf:
-	db "Leaf@"

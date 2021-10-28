@@ -627,9 +627,9 @@ GetMonHeader::
 	push bc
 	push de
 	push hl
-	ld a,[wd11e]
+	ld a,[wd11e] ; a = wd11e = species
 	push af
-	ld a,[wd0b5]
+	ld a,[wd0b5] ; a = wd0b5 = mon dex number
 	ld [wd11e],a
 	ld de,FossilKabutopsPic
 	ld b,$66 ; size of Kabutops fossil and Ghost sprites
@@ -643,13 +643,15 @@ GetMonHeader::
 	cp FOSSIL_AERODACTYL ; Aerodactyl fossil
 	jr z,.specialID
 	predef IndexToPokedex   ; convert pokemon ID in [wd11e] to pokedex number
-	ld a,[wd11e]
-	dec a
-	ld bc, MonBaseStatsEnd - MonBaseStats
-	ld hl,BaseStats
-	call AddNTimes
+.writeHeader
+	ld a,[wd11e] ; a = wd11e = species
+	dec a ; use 0 based index
+	;ld bc, MonBaseStatsEnd - MonBaseStats ; size of vector element
+	ld bc, MON_BASE_STATS_LENGTH ; size of vector element
+	ld hl,BaseStats ; pointer to vector of base pokemon data
+	call AddNTimes ; hl = pointer to designated pokemon
 	ld de,wMonHeader
-	ld bc, MonBaseStatsEnd - MonBaseStats
+	ld bc, MON_BASE_STATS_LENGTH
 	call CopyData
 	jr .done
 .specialID
@@ -1756,7 +1758,12 @@ ExitListMenu::
 	ret
 
 PrintListMenuEntries::
-	coord hl, 5, 3
+;LIST_MENU_BOX_X	EQU 0
+;LIST_MENU_BOX_Y	EQU 1
+;LIST_MENU_BOX_COL_LOW_RIGHT	EQU 19
+;LIST_MENU_BOX_ROW_LOW_RIGHT	EQU 11
+	;coord hl, 5, 3
+	coord hl, (LIST_MENU_BOX_X +1), (LIST_MENU_BOX_Y +1)
 	ld b,9
 	ld c,14
 	call ClearScreenArea

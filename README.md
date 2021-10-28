@@ -7,35 +7,60 @@ a simple hack based on the red++ project (check it out at "https://github.com/th
 this hack has 1 or 2 basic goals in mind:
 1) have fun
 2) ???
+3) become a kajillionaire or...a trillionaire...if i have to
 
-some features:
- * dark mode ;)
- * better and shorter intro; a loadscreen for each game -- press a quickly to skip the racing! ;)
+QUICK ABOUT:
+ * Please remember my english isn't so good ;)
+ * Keep in mind this project is way above alpha so...things may not properly function or they may be out of order.
+ * Until the game is playable from start to finish (i.e. doesn't crash) and has most of the planned features, I will keep it on the level "testing" and retain "debugging" mode advantages (e.g. starting with all the best items & the level 50 ninetales).
+ * i only work while drunk ash, so it may happen i made a change that i didnt know about jajajjaja
+
+major features:
+ * dark mode, plus window enhancements ;)
+ * better and shorter intro
  * god items and mythic berries
+
+more details:
+ * easy mode will be easy (super advantages for the hero...)
+ * hard mode will be impossible (disadvantageous for the hero...)
+ * play as ash/yin in easy mode
+ * play as gary/yang in hard mode (i basically just changed the sprites/palettes so it's not perfect, at the moment)
+ * ashley/leaf is the same in either mode, she isn't canon to these games so i'll leave it be
+ * a loadscreen for each game -- press a quickly to skip the racing! ;)
+ * choose how your trading pokemon obey from the option window! ;) (the whole menu is kind of different now but its not really different...)
  * minor fixes and various mods
+ * stay tuned ;)
 
 under the hood:
- * genders have their own stat added to the various '\_struct' macros (the effect is IV strength isn't determined by sex)
- * minor fixes
+ * the wMonH/BaseStat... vars were collected into their own object (the header_struct) (works!)
+ * gender ratios are added to each pokemons base stat (with an element in header_struct to account for it) (works!)
+ * genders have their own stat added to the various '\_struct' macros (the effect is IV strength isn't determined by sex) (still buggy! and trying various methods to get it working)
+ * implemented a more dynamic window/menu system (in progress) (the effect is to prepare for the RPG system)
+ * replaced hardcodes (as i encountered them) with existing contants or using repeat macros (low priority) (the effect is to make a more versatile code base)
+ * wram has so many changes -- it is almost alien now
 
-todo - high priority:
- * revamp/refactor the way stats and pokemon data are stored/accessed (the effect is so that it's easier to make structural changes)
+todo - current priorities:
+ * revamp/refactor the way stats and pokemon data are stored/accessed (the effect is so that it's easier to make data structure changes)
+ * revamp/tweak the windowing/menuing system to be more flexible (in progress)
 
-ideas/todo/in progress:
- * easy mode will be easy (super advantages for the hero)
- * hard mode will be impossible (disadvantageous for the hero)
+ideas/todo - low priority:
+ * quests, minigames, n shiiii
  * disable/remove all the music (maybe all the sound, i dont use it)
- * quests n minigames n shiii
- * disallow selling random stuff to pokemarts (maybe overhaul the whole shop system)
- * stay tuned ;)
- * todo: remove all the logic for hiding the ":L" and make it always show
+ * remove all the logic for hiding the ":L" and make it always show
+ * move away from all the bcd logic
+ * add new items, story narratives, characters, and climaxes, wich are dynamic or entangled (low priority)
+ 	-- add new items & playable characters
+ 	-- make new story narratives and climax
+ * disallow selling random items to pokemarts (low priority)
+ 	-- maybe overhaul the whole shop system
+ 	-- how often can you sell products to your local "mart"? (it makes no sense)
+ * disable/remove all the link battle stuff (who in hell is linking physical gameboys in current year?)
 
 --- HELP SECTION ---
 
 known issues:
  * hella gfx defects! yes i know this!
  * hard mode crashes! for now im ignoring this problem ;)
- * more crashes than normal! im ignoring this problem too, save often ;)
 
 used a yin/yang item and you screen is broken ?
  * try open the "pokemon" menu then exit
@@ -54,8 +79,3 @@ compile trouble?
  * try 'make clean'
  * if it's a python error related to imports, all i did was change the kind of namespace it loads it as...
 	- so if the error says it has trouble importing foo and the line says 'from . import foo' i changed it to 'import foo'
-
-
---- NOTES ---
-titlescreen.asm:119
-
