@@ -3,7 +3,10 @@
 pokemon yin/yang (working title)
 
 a simple hack based on the red++ project (check it out at "https://github.com/thefakemateo/rpp-backup")
-
+screen shots "https://github.com/WeCanNeitherConfirmNorDeny/pokemon-yinyang-testing-3/tree/main/screenshot"
+releases
+	"https://github.com/WeCanNeitherConfirmNorDeny/pokemon-yinyang-testing-3/raw/main/pokeblue.gbc"
+	"https://github.com/WeCanNeitherConfirmNorDeny/pokemon-yinyang-testing-3/raw/main/pokered.gbc"
 this hack has 1 or 2 basic goals in mind:
 1) have fun
 2) ???
