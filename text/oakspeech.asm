@@ -1,11 +1,12 @@
 _OakSpeechText1::
 	text "Hello there!"
 	line "Welcome to the"
-	cont "world of #mon!"
+	;cont "world of #mon!"
+	cont "#mon Yin!"
 
-	para "My name is Oak!"
-	line "People call me"
-	cont "the #mon Prof!"
+	;para "My name is Oak!"
+	;line "People call me"
+	;cont "the #mon Prof!"
 	prompt
 
 _OakSpeechText2A::
@@ -38,11 +39,6 @@ _OakSpeechText2B::
 	line "#mon daily."
 	prompt
 
-_IntroducePlayerText::
-	text "Now tell me, what"
-	line "is your name?"
-	prompt
-
 _IntroduceRivalText::
 	text "This is my"
 	line "grandson."
@@ -73,15 +69,21 @@ _OakSpeechText3::
 	cont "awaits...Let's go!"
 	done
 
+_IntroducePlayerText::
+	;text "Now tell me, what"
+	;line "is your name?"
+	text "Now, what was your"
+	line "name again?"
+	prompt
+
 _BoyGirlText::
-	text "CHOOSE STORY MODE"
+	text "Play as a boy, or"
+	line "as a girl?"
 	done
 	
 _ShouldMonsObeyText::
-	text "Should traded"
-	line "#mon behave"
-	cont "like caught"
-	cont "#mon?"
+	text "Do you like"
+	line "drugs?"
 	done
 
 _YourNameIsText2::
