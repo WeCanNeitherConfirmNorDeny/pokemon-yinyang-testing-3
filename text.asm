@@ -3163,16 +3163,27 @@ _FellOutOfTreeText::
 	cont "tree!"
 	prompt
 
+; Yin/Yang items
 _useGoldBerryText:: ; gold berry
-	; Your pokemon now/ shines divinely.
-	text "Your #mon now"
-	line "shines divinely."
+	; XXX this needs improvement
+	; [mon name]'s/ now shiny!
+	TX_RAM wcd6d
+	text "'s"
+	line "shiny now!"
 	prompt
 _useOceanBerryText:: ; ocean berry
-	; XXX this needs changing
-	; Your pokemon's the/ ultimate weapon.
-	text "Your #mon has"
-	line "MAX EV's."
+	; XXX this needs improvement
+	; [mon name]'s/ has MAX EV's.
+	TX_RAM wcd6d
+	text "'s"
+	line "has MAX EV's."
+	prompt
+_useMountainBerryText:: ; mountain berry
+	; XXX this needs improvement
+	; [mon name]'s/ has MAX IV's.
+	TX_RAM wcd6d
+	text "'s"
+	line "MAX IV's."
 	prompt
 _useSnowglobeIcyText:: ; snowglobe - icy
 	; Shook the/ snowglobe!
@@ -3192,12 +3203,12 @@ _useSnowglobeHotText:: ; snowglobe - hot
 	prompt
 _useMirrorText:: ; mirror
 	; Looked into the/ enchanted mirror...
+	; The mirror.../ burst into smoke!
+	; You see magical/ things.
 	text "Looked into the"
 	line "enchanted mirror…"
-	; The mirror.../ burst into smoke!
 	para "The mirror…"
 	line "burst into smoke!"
-	; You see magical things.
 	para "You see magical"
 	line "things."
 	prompt

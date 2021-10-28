@@ -21,11 +21,7 @@ _PokeBallDescription::
 	prompt
 
 _TownMapDescription::
-	text "A very convenient"
-	line "map that can be"
-	cont "viewed anytime."
-
-	para "Ascertain your"
+	text "Ascertain your"
 	line "current location"
 	cont "easily."
 	prompt
@@ -38,6 +34,7 @@ _BicycleDescription::
 	prompt
 
 _SurfboardDescription::
+	; XXX Needs changing
 	text "We surf, brah?"
 	prompt
 
@@ -650,7 +647,6 @@ _GoldBerryDescription:: ; gold berry
 	; Lift pokemon from/ their suffering.
 	text "A mythical berry"
 	line "that is said to…"
-	
 	para "Lift #mon from"
 	line "their suffering."
 	prompt
@@ -659,17 +655,24 @@ _OceanBerryDescription:: ; ocean berry
 	; Endow pokemon with/ the fury of/ 10000 storms.
 	text "A mythical berry"
 	line "that is said to…"
-	
 	para "Endow #mon with"
 	line "the fury of"
 	cont "10000 storms."
+	prompt
+_MountainBerryDescription:: ; mountain berry
+	; XXX
+	; A mythical berry/ that is said to...
+	; Endow pokemon with/ 
+	text "A mythical berry"
+	line "that is said to…"
+	para "Endow #mon with"
+	line "MAX IV's."
 	prompt
 _SnowglobeDescription:: ; snowglobe
 	; A mysterious/ snowglobe...
 	; A strange energy/ seems to come/ from it.
 	text "A mysterious"
 	line "snowglobe…"
-	
 	para "A strange energy"
 	line "seems to come"
 	cont "from it."
@@ -679,7 +682,6 @@ _MirrorDescription:: ; mirror
 	; It sometimes shows/ the future.
 	text "An enchanted"
 	line "mirror…"
-	
 	para "It sometimes shows"
 	line "the future."
 	prompt
@@ -1465,6 +1467,12 @@ _OceanBerryDescription_Mart:: ; ocean berry
 	text "Endows a #mon"
 	line "with the fury of"
 	cont "10,000 storms."
+	prompt
+_MountainBerryDescription_Mart:: ; mountain berry
+	; XXX
+	; Endows a pokemon/ 
+	text "Endows a #mon"
+	line "with MAX IV's."
 	prompt
 _SnowglobeDescription_Mart:: ; mysterious snowglobe
 	; *not saleable

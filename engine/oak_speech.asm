@@ -53,7 +53,8 @@ OakSpeech:
 	ld [wItemQuantity],a
 	call AddItemToInventory  ; give one potion
 
-	ld c, $ff
+	; ----------
+	; debugging: start items
 	callba start_items
 
 	ld a,[wDefaultMap]
@@ -82,15 +83,20 @@ OakSpeech:
 	ld a, [wCurrentMenuItem]
 	ld [wPlayerGender], a ; store player's gender. 00 for boy, 01 for girl
 
-	ld hl,ShouldMonsObeyText
-	call PrintText
-	call YesNoChoice
-	ld a,[wCurrentMenuItem]
-	and a
-	jr nz, .canDisobey
-	ld hl,wExtraFlags
-	set 2,[hl]
-.canDisobey
+	; ----------
+	; debugging: skip intro
+	;callba skip_intro
+	;jp z, .next
+
+	;ld hl,ShouldMonsObeyText
+	;call PrintText
+	;call YesNoChoice
+	;ld a,[wCurrentMenuItem]
+	;and a
+	;jr nz, .canDisobey
+	;ld hl,wExtraFlags
+	;set 2,[hl]
+;.canDisobey
 	call ClearScreen ; clear the screen before resuming normal intro
 	call GetOakPalID
 	ld de,ProfOakPic
@@ -101,12 +107,15 @@ OakSpeech:
 	call PrintText
 	call GBFadeOutToWhite
 	;call ClearScreen
-	call GetSylveonPalID ; HAX
-	ld a,SYLVEON
+	;call GetSylveonPalID ; HAX
+	;ld a,SYLVEON
+	call GetIntroMonPalID ; palette
+	ld a,INTRO_MON ; sprite
 	ld [wd0b5],a
 	ld [wcf91],a
 	call GetMonHeader
-	coord hl, 6, 4
+	;coord hl, 6, 4
+	centercoord hl, 6, 6, SCREEN_WIDTH -2, SCREEN_HEIGHT -4
 	call LoadFlippedFrontSpriteByMonIndex
 	call MovePicLeft
 	ld hl,OakSpeechText2

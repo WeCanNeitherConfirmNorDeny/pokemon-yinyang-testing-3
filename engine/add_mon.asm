@@ -67,8 +67,9 @@ _AddPartyMon:
 	ld a, [wcf91]
 	ld [wd0b5], a
 	call GetMonHeader
-	ld hl, wMonHeader
-	ld a, [hli]
+	;ld hl, wMonHeader
+	ld hl, wMonHIndex
+	ld a, [hl]
 	ld [de], a ; species
 	inc de
 	pop hl
@@ -87,23 +88,6 @@ _AddPartyMon:
 	ld a, [hli]
 	ld b, [hl]
 	pop hl
-	.generate_gender
-	;hl points to party_struct.Species
-		push hl
-		push bc
-		push de
-		ld d, h
-		ld e, l
-		call Random
-		ld bc, (wPartyMon1Gender - wPartyMon1@start)
-		add hl, bc
-		;ld [wGenderTemp], a
-		;callba GetMonGender
-		;ld [wGenderTemp], a
-		ld [hl], a ; write
-		pop de
-		pop bc
-		pop hl
 	jr nz, .writeFreshMonData
 
 ; If the mon is being added to the player's party, update the pokedex.
@@ -145,6 +129,55 @@ _AddPartyMon:
 	ld a, ATKDEFDV_SHINY
 	ld b, SPDSPCDV_SHINY
 	jr nz,.writeFreshMonData
+	;;;;;;;;;;;;;;;
+	.initialize_gender
+	;hl points to Species
+		ld a, $ff
+		ld [wGenderTemp], a
+		push hl
+		ld hl, wMonHGenderRatio
+		call Random
+		;ld [wGenderTemp], a
+		ld b, a ; b = stat
+		ld a, [hl] ; a = ratio
+	;;;;;;;;;;;;;;;
+	; Check for horses
+	; a == mon's gender ratio
+		cp MALE_ONLY
+		jr z, .initialize_gender_male
+		cp FEMALE_ONLY
+		jr z, .initialize_gender_female
+		and a
+		jr z, .initialize_gender_genderless
+
+		; else... fall through
+	;;;;;;;;;;;;;;;
+	; Check for zebras
+	; Else: compare the ratio to the value we found earlier
+	; a == ratio for the species
+	; b == gender stat
+
+	; if a < b, its female
+		dec a
+		cp b
+		jr c, .initialize_gender_male
+		jr .initialize_gender_female
+	.initialize_gender_genderless
+		xor a
+		jr .initialize_gender_done
+	.initialize_gender_male
+		ld a, MALE
+		jr .initialize_gender_done
+	.initialize_gender_female
+		ld a, FEMALE
+		;jr .initialize_gender_done
+	.initialize_gender_done
+		ld [wGenderTemp], a ; wGenderTemp = a = actual gender
+	;;;;;;;;;;;;;;;
+		;ld bc, (wPartyMon1Gender - wPartyMon1Species)
+		;add hl, bc
+		;ld [hl], a ; write
+		pop hl
 ;generate random DVS
 	call Random
 	ld b, a
@@ -157,6 +190,12 @@ _AddPartyMon:
 	pop bc
 	ld [hli], a
 	ld [hl], b         ; write IVs
+	push hl ; HAX
+	ld bc, (wPartyMon1Gender) - (wPartyMon1DVs@end -1)
+	add hl, bc ; hl points to 
+	ld a, [wGenderTemp] ; fetch initialized stat
+	ld [hl], a ; write gender
+	pop hl ; HAX
 	ld bc, (wPartyMon1HPExp - 1) - (wPartyMon1DVs + 1)
 	add hl, bc
 	ld a, 1
@@ -209,12 +248,14 @@ _AddPartyMon:
 	xor a
 	inc de
 	push de
-	ld [de], a
-	inc de
-	ld [de], a
-	inc de
-	ld [de], a
-	inc de
+	REPT (NUM_MOVES -2)
+		ld [de], a
+		inc de
+	ENDR
+	;ld [de], a
+	;inc de
+	;ld [de], a
+	;inc de
 	ld [de], a
 	push de
 	dec de
@@ -411,12 +452,12 @@ _MoveMon:
 	ld a, [wMoveMonType]
 	dec a
 	ld hl, wPartyMons
-	ld bc, wPartyMon2 - wPartyMon1 ; $2c
+	ld bc, wPartyMon2 - wPartyMon1 ; sizeof 1 PartyMon's data
 	ld a, [wPartyCount]
 	jr nz, .addMonOffset
 	; if it's PARTY_TO_BOX
 	ld hl, wBoxMons
-	ld bc, wBoxMon2 - wBoxMon1 ; $21
+	ld bc, wBoxMon2 - wBoxMon1 ; sizeof 1 BoxMon's data
 	ld a, [wNumInBox]
 .addMonOffset
 	dec a
@@ -428,13 +469,13 @@ _MoveMon:
 	ld a, [wMoveMonType]
 	and a
 	ld hl, wBoxMons
-	ld bc, wBoxMon2 - wBoxMon1 ; $21
+	ld bc, wBoxMon2 - wBoxMon1 ; sizeof 1 BoxMon's data
 	jr z, .addMonOffset2
 	cp DAYCARE_TO_PARTY
 	ld hl, wDayCareMon
 	jr z, .copyMonData
 	ld hl, wPartyMons
-	ld bc, wPartyMon2 - wPartyMon1 ; $2c
+	ld bc, wPartyMon2 - wPartyMon1 ; sizeof 1 PartyMon's data
 .addMonOffset2
 	ld a, [wWhichPokemon]
 	call AddNTimes
@@ -546,3 +587,4 @@ _MoveMon:
 .done
 	and a
 	ret
+

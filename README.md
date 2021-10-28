@@ -18,12 +18,17 @@ under the hood:
  * genders have their own stat added to the various '\_struct' macros (the effect is IV strength isn't determined by sex)
  * minor fixes
 
+todo - high priority:
+ * revamp/refactor the way stats and pokemon data are stored/accessed (the effect is so that it's easier to make structural changes)
+
 ideas/todo/in progress:
  * easy mode will be easy (super advantages for the hero)
  * hard mode will be impossible (disadvantageous for the hero)
  * disable/remove all the music (maybe all the sound, i dont use it)
  * quests n minigames n shiii
+ * disallow selling random stuff to pokemarts (maybe overhaul the whole shop system)
  * stay tuned ;)
+ * todo: remove all the logic for hiding the ":L" and make it always show
 
 --- HELP SECTION ---
 
@@ -32,7 +37,7 @@ known issues:
  * hard mode crashes! for now im ignoring this problem ;)
  * more crashes than normal! im ignoring this problem too, save often ;)
 
-used a yin/yang item and you screen is broken ?:
+used a yin/yang item and you screen is broken ?
  * try open the "pokemon" menu then exit
  * im looking at some of the causes (usually its a stack related) but it's a low priority for now since it doesn't affect gameplay
 
@@ -45,8 +50,12 @@ to install and build:
  * run make
  	$ nice -13 make -j$(($(nproc) +1)); echo exit: $?; echo; date
 
-compile trouble?:
+compile trouble?
  * try 'make clean'
  * if it's a python error related to imports, all i did was change the kind of namespace it loads it as...
 	- so if the error says it has trouble importing foo and the line says 'from . import foo' i changed it to 'import foo'
+
+
+--- NOTES ---
+titlescreen.asm:119
 

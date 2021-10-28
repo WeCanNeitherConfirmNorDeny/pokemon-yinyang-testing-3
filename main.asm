@@ -11,13 +11,12 @@ PICS_3 EQU $B
 PICS_4 EQU $C
 PICS_5 EQU $D
 
-INTRO EQU $FF ; these assets are rarely used so put them away
+;INTRO EQU $FF ; these assets are rarely used so put them away
 
 INCLUDE "home.asm"
 
 SECTION "bank1",ROMX,BANK[$1]
 
-INCLUDE "engine/mon_gender.asm"
 
 INCLUDE "engine/overworld/oam.asm"
 INCLUDE "engine/oam_dma.asm"
@@ -1945,7 +1944,11 @@ SECTION "bank1A",ROMX,BANK[$1A]
 
 INCLUDE "engine/battle/decrement_pp.asm"
 
-Version_GFX:       INCBIN "gfx/red/redgreenversion.1bpp" ; 10 tiles
+IF DEF(_HARD)
+	Version_GFX:       INCBIN "gfx/blue/blueversion.1bpp" ; 10 tiles
+ELSE
+	Version_GFX:       INCBIN "gfx/red/redgreenversion.1bpp" ; 10 tiles
+ENDC
 Version_GFXEnd:
 
 OakTS_GFX:         INCBIN "gfx/tilesets/oakts.2bpp"
@@ -2718,9 +2721,9 @@ SECTION "Trainer Parties", ROMX,BANK[$3B]
 INCLUDE "engine/battle/read_trainer_party.asm"
 INCLUDE "engine/overworld/advance_player_sprite.asm"
 
-SECTION "Rare/Intro", ROMX,BANK[INTRO]
 INCLUDE "debug2.asm"
 NintendoCopyrightLogoGraphics:  INCBIN "gfx/copyright.2bpp"
 GamefreakLogoGraphics:          INCBIN "gfx/gamefreak.2bpp"
 GamefreakLogoGraphicsEnd:
 
+;INCLUDE "engine/mon_gender.asm"

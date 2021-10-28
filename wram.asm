@@ -10,34 +10,37 @@ ENDM
 ; wDayCareMon2:: box_struct wDayCareMon2
 ; wBoxMon1:: box_struct wBoxMon1
 ; wBoxMon2:: ds box_struct_length * (MONS_PER_BOX + -1)
-box_struct_length EQU \
-	(1*7)+(1*NUM_MOVES*2)+(1*NUM_DVS) \
-	+ (2*1)+(2*NUM_STATS) \
-	+ (3*1)
+_box_struct_t: MACRO
+\1Species::	ds SIZE_SPECIES
+\1HP::		ds SIZE_HP
+\1PartyPos::
+\1BoxLevel::	ds SIZE_BOXLEVEL
+\1Status::	ds SIZE_STATUS
+\1Types::
+\1Type1::	ds SIZE_TYPE1
+\1Type2::	ds SIZE_TYPE2
+\1CatchRate_NotReferenced::
+\1CatchRate::	ds SIZE_CATCHRATE
+\1Moves::	ds SIZE_MOVES
+\1OTID::	ds SIZE_OTID
+\1Exp::		ds SIZE_EXP
+\1EVs::
+\1StatExp::
+\1HPExp::	ds SIZE_HPEXP
+\1AttackExp::	ds SIZE_ATTACKEXP
+\1DefenseExp::	ds SIZE_DEFENSEEXP
+\1SpeedExp::	ds SIZE_SPEEDEXP
+\1SpecialExp::	ds SIZE_SPECIALEXP
+\1IVs::
+\1DVs::
+\1AtkDefDV::	ds SIZE_ATKDEFDV
+\1SpdSpcDV::	ds SIZE_SPDSPCDV
+\1PP::		ds SIZE_PP
+ENDM
 box_struct: MACRO
 \1@start::
-\1Species::    db
-\1HP::         dw
-\1PartyPos::
-\1BoxLevel::   db
-\1Status::     db
-\1Type::
-\1Type1::      db
-\1Type2::      db
-\1CatchRate_NotReferenced::
-\1CatchRate::  db
-\1Moves::      ds NUM_MOVES
-\1OTID::       dw
-\1Exp::        ds 3
-\1EVs::
-\1HPExp::      dw
-\1AttackExp::  dw
-\1DefenseExp:: dw
-\1SpeedExp::   dw
-\1SpecialExp:: dw
-\1IVs::
-\1DVs::        ds NUM_DVS
-\1PP::         ds NUM_MOVES
+	_box_struct_t \1
+\1Gender:: ds SIZE_GENDER
 \1@end::
 ENDM
 
@@ -57,60 +60,57 @@ ENDM
 ; wEnemyMon6:: party_struct wEnemyMon6
 party_struct: MACRO
 \1@start::
-\1Species::    db
-\1HP::         dw
-\1PartyPos::
-\1BoxLevel::   db
-\1Status::     db
-\1Type::
-\1Type1::      db
-\1Type2::      db
-\1CatchRate_NotReferenced::
-\1CatchRate::  db
-\1Moves::      ds NUM_MOVES
-\1OTID::       dw
-\1Exp::        ds 3
-\1HPExp::      dw
-\1AttackExp::  dw
-\1DefenseExp:: dw
-\1SpeedExp::   dw
-\1SpecialExp:: dw
-\1DVs::        ds NUM_DVS
-\1PP::         ds NUM_MOVES
-\1Level::      db
+	_box_struct_t \1
+\1Level::	ds SIZE_LEVEL
 \1Stats::
-\1MaxHP::      dw
-\1Attack::     dw
-\1Defense::    dw
-\1Speed::      dw
-\1Special::    dw
+\1MaxHP::	ds SIZE_MAXHP
+\1Attack::	ds SIZE_ATTACK
+\1Defense::	ds SIZE_DEFENSE
+\1Speed::	ds SIZE_SPEED
+\1Special::	ds SIZE_SPECIAL
+\1Gender:: ds SIZE_GENDER
 \1@end::
 ENDM
 
 ;;;;;;;;;;;;;;;
 ; wBattleMon:: battle_struct wBattleMon
+; wEnemyMon:: battle_struct wEnemyMon
 battle_struct: MACRO
 \1@start::
-\1Species::    db
-\1HP::         dw
-\1PartyPos::
-\1BoxLevel::   db
-\1Status::     db
-\1Type::
-\1Type1::      db
-\1Type2::      db
-\1CatchRate_NotReferenced::
-\1CatchRate::  db
-\1Moves::      ds NUM_MOVES
-\1DVs::        ds NUM_DVS
-\1Level::      db
+	_box_struct_t \1
+;\1Species::	ds SIZE_SPECIES
+;\1HP::		ds SIZE_HP
+;\1PartyPos::
+;\1BoxLevel::	ds SIZE_BOXLEVEL
+;\1Status::	ds SIZE_STATUS
+;\1Types::
+;\1Type1::	ds SIZE_TYPE1
+;\1Type2::	ds SIZE_TYPE2
+;\1CatchRate_NotReferenced::
+;\1CatchRate::	ds SIZE_CATCHRATE
+;\1Moves::	ds SIZE_MOVES
+;\1PP::		ds SIZE_PP
+;\1IVs::
+;\1DVs::
+;\1AtkDefDV::	ds SIZE_ATKDEFDV
+;\1SpdSpcDV::	ds SIZE_SPDSPCDV
+;\1EVs::				; HAX
+;\1StatExp::				; HAX
+;\1HPExp::	ds SIZE_HPEXP		; HAX
+;\1AttackExp::	ds SIZE_ATTACKEXP	; HAX
+;\1DefenseExp::	ds SIZE_DEFENSEEXP	; HAX
+;\1SpeedExp::	ds SIZE_SPEEDEXP	; HAX
+;\1SpecialExp::	ds SIZE_SPECIALEXP	; HAX
+;\1Exp::		ds SIZE_EXP	; HAX
+;\1OTID::	ds SIZE_OTID		; HAX
+\1Level::	ds SIZE_LEVEL
 \1Stats::
-\1MaxHP::      dw
-\1Attack::     dw
-\1Defense::    dw
-\1Speed::      dw
-\1Special::    dw
-\1PP::         ds NUM_MOVES
+\1MaxHP::	ds SIZE_MAXHP
+\1Attack::	ds SIZE_ATTACK
+\1Defense::	ds SIZE_DEFENSE
+\1Speed::	ds SIZE_SPEED
+\1Special::	ds SIZE_SPECIAL
+\1Gender:: ds SIZE_GENDER
 \1@end::
 ENDM
 
@@ -125,7 +125,6 @@ ENDM
 ;; Until this is fixed, this struct will have
 ;; to be declared manually.
 ;
-; wEnemyMon:: enemy_struct wEnemyMon
 ;enemy_struct: MACRO
 ;\1@start::
 ;\1Species::   db
@@ -148,9 +147,60 @@ ENDM
 ;\1Speed::     dw
 ;\1Special::   dw
 ;\1PP::        ds NUM_MOVES
-;\1Gender::ds 1
 ;\1@end::
 ;ENDM
+
+;wMonHeader:: ; d0b8
+;
+;wMonHIndex:: ; d0b8
+;; In the ROM base stats data structure, this is the dex number, but it is
+;; overwritten with the internal index number after the header is copied to WRAM.
+;	ds 1
+;
+;wMonHBaseStats:: ; d0b9
+;wMonHBaseHP:: ds 1
+;wMonHBaseAttack::ds 1
+;wMonHBaseDefense::ds 1
+;wMonHBaseSpeed::ds 1
+;wMonHBaseSpecial::ds 1
+;wMonHGenderRatio::ds SIZE_GENDER_RATIO
+;wMonHTypes:: ; d0be
+;wMonHType1::ds 1
+;wMonHType2::ds 1
+;wMonHCatchRate::ds 1
+;wMonHBaseEXP::ds 1
+;wMonHSpriteDim::ds 1
+;wMonHFrontSprite::ds 2
+;wMonHBackSprite::ds 2
+;wMonHMoves::ds NUM_MOVES
+;wMonHGrowthRate::ds 1
+;wMonHLearnset::flag_array 50 + 5 ; bit field
+;wMonHPicBank::ds 1
+
+;;;;;;;;;;;;;;;
+; wMonH:: header_struct wMonH
+header_struct: MACRO
+\1eader::	;wMonHeader::
+\1Index::	ds SIZE_HEADER_INDEX
+\1BaseStats::
+\1BaseAttack::	ds SIZE_BASE_ATTACK
+\1BaseDefense::	ds SIZE_BASE_DEFENSE
+\1BaseSpeed::	ds SIZE_BASE_SPEED
+\1BaseSpecial::	ds SIZE_BASE_SPECIAL
+\1GenderRatio::	ds SIZE_GENDER_RATIO
+\1Types::
+\1Type1::	ds SIZE_HEADER_TYPE_1
+\1Type2::	ds SIZE_HEADER_TYPE_2
+\1CatchRate::	ds SIZE_HEADER_CATCHRATE
+\1BaseEXP::	ds SIZE_BASE_EXP
+\1SpriteDim::	ds SIZE_HEADER_SPRITE_DIM
+\1FrontSprite::	ds SIZE_HEADER_FRONT_SPRITE
+\1BackSprite::	ds SIZE_HEADER_BACK_SPRITE
+\1Moves::	ds NUM_MOVES
+\1GrowthRate::	ds SIZE_HEADER_GROWTHRATE
+\1Learnset::	flag_array SIZE_HEADER_LEARNSET
+\1PicBank::	ds SIZE_HEADER_PICBANK
+ENDM
 
 SECTION "WRAM Bank 0", WRAM0
 
@@ -517,6 +567,7 @@ wMenuCursorLocation:: ; cc30
 	ds 2
 
 ; unused?
+wUnused_WORD::
 	ds 2
 
 wMenuJoypadPollCount:: ; cc34
@@ -543,6 +594,7 @@ wTradeCenterPointerTableIndex:: ; cc38
 	ds 1
 
 ; unused?
+wUnused_BYTE::
 	ds 1
 
 wTextDest:: ; cc3a
@@ -570,6 +622,7 @@ wSerialExchangeNybbleReceiveData:: ; cc3e
 	ds 1
 
 ; unused?
+wUnused_3bytes::
 	ds 3
 
 wSerialExchangeNybbleSendData:: ; cc42
@@ -631,6 +684,7 @@ wTrainerHeaderFlagBit:: ; probably removable once I switch to Gen 2 style event 
 	ds 1
 
 ; unused?
+wUnused_BYTE_2::
 	ds 1
 
 wNPCMovementScriptPointerTableNum:: ; cc57
@@ -643,6 +697,7 @@ wNPCMovementScriptBank:: ; cc58
 	ds 1
 
 ; unused?
+wUnused_WORD_2::
 	ds 2
 
 wUnusedCC5B:: ; cc5b
@@ -1343,6 +1398,7 @@ wFlags_0xcd60:: ; cd60
 	ds 1
 
 ; unused?
+wcd61::
 	ds 9
 
 wActionResultOrTookBattleTurn:: ; cd6a
@@ -1627,11 +1683,6 @@ wItemQuantity:: ; cf96
 wMaxItemQuantity:: ; cf97
 	ds 1
 
-; LoadMonData copies mon data here
-wLoadedMon:: party_struct wLoadedMon ; cf98
-wLoadedMonGender::
-	db
-
 wFontLoaded:: ; cfc4
 ; bit 0: The space in VRAM that is used to store walk animation tile patterns
 ;        for the player and NPCs is in use for font tile patterns.
@@ -1709,72 +1760,51 @@ wPlayerMoveAccuracy:: ; cfd6
 wPlayerMoveMaxPP:: ; cfd7
 	ds 1
 
-
 wEnemyMonSpecies2:: ; cfd9
 	ds 1
-wPlayerMonSpecies2:: ; cfda
 wBattleMonSpecies2:: ; cfda
 	ds 1
 wEnemyMonGender2:: ; cfdb
 	ds 1
-wPlayerMonGender2:: ; cfdc
 wBattleMonGender2:: ; cfdc
 	ds 1
 
-wEnemyMonNick:: ds NAME_LENGTH ; cfda
-
-;wEnemyMon:: ; cfe5
+;wEnemyMonNick:: ds NAME_LENGTH ; cfda
 ;
-;wEnemyMonSpecies::   db
-;wEnemyMonHP::        dw
-;wEnemyMonPartyPos::
-;wEnemyMonBoxLevel::  db
-;wEnemyMonStatus::    db
-;wEnemyMonType::
-;wEnemyMonType1::     db
-;wEnemyMonType2::     db
-;wEnemyMonCatchRate_NotReferenced:: db
-;wEnemyMonMoves::     ds NUM_MOVES
-;wEnemyMonDVs::       ds 2
-;wEnemyMonLevel::     db
-;wEnemyMonMaxHP::     dw
-;wEnemyMonAttack::    dw
-;wEnemyMonDefense::   dw
-;wEnemyMonSpeed::     dw
-;wEnemyMonSpecial::   dw
-;wEnemyMonPP::        ds NUM_MOVES
-;wEnemyMonGender::ds 1
-;SECTION "WRAM Bank 1", WRAMX, BANK[1]
+;;SECTION "WRAM Bank 1", WRAMX, BANK[1]
+;
+;wEnemyMon:: battle_struct wEnemyMon
+;wEnemyMonGender::ds SIZE_GENDER
 
-;wEnemyMon:: enemy_struct wEnemyMon
-wEnemyMon:: battle_struct wEnemyMon
-wEnemyMonGender::
-	db
-
-wEnemyMonBaseStats:: ds 5
+;wEnemyMonBaseStats:: ds 5
+wEnemyMonBaseStats:: ds NUM_STATS
 wEnemyMonBaseExp:: ds 1
 
-wPlayerMonNick::
-wBattleMonNick:: ds NAME_LENGTH ; d009
-wPlayerMon::
-wBattleMon:: battle_struct wBattleMon ; d014
-wBattleMonGender::
-	db
+;wPlayerMonNick::
+;wBattleMonNick:: ds NAME_LENGTH ; d009
+;wPlayerMon::
+;wBattleMon:: battle_struct wBattleMon ; d014
+;wPlayerMonGender:: ; alias
+;wBattleMonGender::ds SIZE_GENDER
 
 wTrainerClass:: ; d031
 	ds 1
 
+;; LoadMonData copies mon data here
+;wLoadedMon:: party_struct wLoadedMon ; cf98
+;wLoadedMonGender::ds SIZE_GENDER
+
 ; unused?
-	ds 1
-	
+;	ds 1
+
 wTrainerPicID::
 ; Defaults to trainer class, can be changed with trainer type $FE
 	ds 1
-	
+
 wTrainerAINumber::
 ; Defaults to trainer class, can be changed with trainer type $FE
 	ds 1
-	
+
 wTrainerPicBank:: ds 1
 
 wTrainerPicPointer:: ; d033
@@ -2187,6 +2217,7 @@ wSpriteDecodeTable1Ptr:: ; d0b3
 ; pointer to differential decoding table (assuming initial value 1)
 	ds 2
 
+wMonHeaderTemp::
 wd0b5:: ds 1 ; used as a temp storage area for Pokemon Species, and other Pokemon/Battle related things
 
 wNameListType:: ; d0b6
@@ -2195,54 +2226,9 @@ wNameListType:: ; d0b6
 wPredefBank:: ; d0b7
 	ds 1
 
-wMonHeader:: ; d0b8
-
-wMonHIndex:: ; d0b8
-; In the ROM base stats data structure, this is the dex number, but it is
-; overwritten with the internal index number after the header is copied to WRAM.
-	ds 1
-
-wMonHBaseStats:: ; d0b9
-wMonHBaseHP:: ; d0b9
-	ds 1
-wMonHBaseAttack:: ; d0ba
-	ds 1
-wMonHBaseDefense:: ; d0bb
-	ds 1
-wMonHBaseSpeed:: ; d0bc
-	ds 1
-wMonHBaseSpecial:: ; d0bd
-	ds 1
-
-wMonHTypes:: ; d0be
-wMonHType1:: ; d0be
-	ds 1
-wMonHType2:: ; d0bf
-	ds 1
-
-wMonHCatchRate:: ; d0c0
-	ds 1
-wMonHBaseEXP:: ; d0c1
-	ds 1
-wMonHSpriteDim:: ; d0c2
-	ds 1
-wMonHFrontSprite:: ; d0c3
-	ds 2
-wMonHBackSprite:: ; d0c5
-	ds 2
-
-wMonHMoves:: ; d0c7
-	ds NUM_MOVES
-
-wMonHGrowthRate:: ; d0cb
-	ds 1
-
-wMonHLearnset:: ; d0cc
-; bit field
-	flag_array 50 + 5
-
-wMonHPicBank:: ; d0d3
-	ds 1
+;;;;;;;;;;;;;;;
+; collect all the wMonH* elements together
+wMonH:: header_struct wMonH ; d0b8
 
 wSavedTilesetType:: ; d0d4
 ; saved at the start of a battle and then written back at the end of the battle
@@ -2475,35 +2461,38 @@ wPlayerName:: ; d158
 	ds NAME_LENGTH
 
 
-wPartyDataStart::
-
-wPartyCount::   ds 1 ; d163
-wPartySpecies:: ds PARTY_LENGTH ; d164
-wPartyEnd::     ds 1 ; d16a
-
-wPartyMons::
-wPartyMon1:: party_struct wPartyMon1 ; d16b
-wPartyMon1Gender::db
-wPartyMon2:: party_struct wPartyMon2 ; d197
-wPartyMon2Gender::db
-wPartyMon3:: party_struct wPartyMon3 ; d1c3
-wPartyMon3Gender::db
-wPartyMon4:: party_struct wPartyMon4 ; d1ef
-wPartyMon4Gender::db
-wPartyMon5:: party_struct wPartyMon5 ; d21b
-wPartyMon5Gender::db
-wPartyMon6:: party_struct wPartyMon6 ; d247
-wPartyMon6Gender::db
-IF PARTY_LENGTH > 6
-wPartyMon7:: party_struct wPartyMon7
-wPartyMon7Gender::db
-ENDC
-
-wPartyMonOT::    ds NAME_LENGTH * PARTY_LENGTH ; d273
-wPartyMonNicks:: ds NAME_LENGTH * PARTY_LENGTH ; d2b5
-
-wPartyDataEnd::
-
+;wPartyDataStart::
+;
+;wPartyCount::	ds 1 ; d163
+;wPartySpecies::	ds PARTY_LENGTH ; d164
+;wPartyEnd::	ds 1 ; d16a
+;
+;wPartyMons::
+;wPartyMon1:: party_struct wPartyMon1 ; d16b
+;wPartyMon1Gender::ds SIZE_GENDER
+;wPartyMon2:: party_struct wPartyMon2 ; d197
+;wPartyMon2Gender::ds SIZE_GENDER
+;wPartyMon3:: party_struct wPartyMon3 ; d1c3
+;wPartyMon3Gender::ds SIZE_GENDER
+;wPartyMon4:: party_struct wPartyMon4 ; d1ef
+;wPartyMon4Gender::ds SIZE_GENDER
+;wPartyMon5:: party_struct wPartyMon5 ; d21b
+;wPartyMon5Gender::ds SIZE_GENDER
+;wPartyMon6:: party_struct wPartyMon6 ; d247
+;wPartyMon6Gender::ds SIZE_GENDER
+;;IF PARTY_LENGTH > 6
+;;	wPartyMon7:: party_struct wPartyMon7
+;;	wPartyMon7Gender::ds SIZE_GENDER
+;;	IF PARTY_LENGTH > 7
+;;		wPartyMon8:: party_struct wPartyMon8
+;;		wPartyMon8Gender::ds SIZE_GENDER
+;;	ENDC
+;;ENDC
+;
+;wPartyMonOT::    ds NAME_LENGTH * PARTY_LENGTH ; d273
+;wPartyMonNicks:: ds NAME_LENGTH * PARTY_LENGTH ; d2b5
+;
+;wPartyDataEnd::
 
 wMainDataStart::
 
@@ -2515,13 +2504,6 @@ wPokedexSeen:: ; d30a
 	flag_array NUM_POKEMON
 wPokedexSeenEnd::
 
-
-wNumBagItems:: ; d31d
-	ds 1
-wBagItems:: ; d31e
-; item, quantity
-	ds BAG_ITEM_CAPACITY * 2
-	ds 1 ; end
 
 wPlayerMoney:: ; d347
 	ds 3 ; BCD
@@ -2546,7 +2528,8 @@ wObtainedKantoBadges:: ; d356
 	flag_array 8
 
 wObtainedJohtoBadges::
-	ds 1
+	;ds 1
+	flag_array 8
 
 wLetterPrintingDelayFlags:: ; d358
 ; bit 0: If 0, limit the delay to 1 frame. Note that this has no effect if
@@ -2842,12 +2825,14 @@ wBoxItems:: ; d53b
 	ds PC_ITEM_CAPACITY * 2
 	ds 1 ; end
 
-wCurrentBoxNum:: ; d5a0
-; bits 0-6: box number
-; bit 7: whether the player has changed boxes before
+wNumBagItems:: ; d31d
 	ds 1
+wBagItems:: ; d31e
+; item, quantity
+	ds BAG_ITEM_CAPACITY * 2
+	ds 1 ; end
 
-; unused 
+; unused
 	ds 1
 
 wNumHoFTeams:: ; d5a2
@@ -3154,7 +3139,7 @@ wBattleTowerCup::
 wBattleTowerCurLevelsCleared::
 ; Stores how many trainers the player has beaten so far
 	ds 1
-	
+
 wBattleTowerBP::
 ; Stores how many BP or Battle Points the player has earned
 	ds 2
@@ -3309,7 +3294,7 @@ wd72c:: ; d72c
 ; bit 1: prevent audio fade out
 	ds 1
 
-wd72d:: 
+wd72d::
 ; This variable is used for temporary flags and as the destination map when
 ; warping to the Trade Center or Colosseum.
 ; bit 0: sprite facing directions have been initialised in the Trade Center
@@ -3334,7 +3319,7 @@ wd72e::
 ; TODO: Move some of this into event flags, others into an EngineFlags array
 	ds 1
 
-; unused? 
+; unused?
 	ds 1
 
 wd730:: ; d730
@@ -3439,36 +3424,40 @@ wEnemyPartyCount:: ds 1     ; d89c
 wEnemyPartyMons::  ds PARTY_LENGTH + 1 ; d89d
 
 ; Overload enemy party data
-UNION
+;UNION
 
-wWaterRate:: db ; d8a4
-wWaterMons:: db ; d8a5
+wWaterRate:: db ; d8c4
+wWaterMons:: db ; d8c5
 
-NEXTU
+;NEXTU
 
-wEnemyMons:: ; d8a4
-wEnemyMon1:: party_struct wEnemyMon1
-wEnemyMon1Gender::db
-wEnemyMon2:: party_struct wEnemyMon2
-wEnemyMon2Gender::db
-wEnemyMon3:: party_struct wEnemyMon3
-wEnemyMon3Gender::db
-wEnemyMon4:: party_struct wEnemyMon4
-wEnemyMon4Gender::db
-wEnemyMon5:: party_struct wEnemyMon5
-wEnemyMon5Gender::db
-wEnemyMon6:: party_struct wEnemyMon6
-wEnemyMon6Gender::db
-IF PARTY_LENGTH > 6
-wEnemyMon7:: party_struct wEnemyMon7
-wEnemyMon7Gender::db
-ENDC
+;wEnemyMons:: ; d8c4
+;wEnemyMon1:: party_struct wEnemyMon1
+;wEnemyMon1Gender::ds SIZE_GENDER
+;wEnemyMon2:: party_struct wEnemyMon2
+;wEnemyMon2Gender::ds SIZE_GENDER
+;wEnemyMon3:: party_struct wEnemyMon3
+;wEnemyMon3Gender::ds SIZE_GENDER
+;wEnemyMon4:: party_struct wEnemyMon4
+;wEnemyMon4Gender::ds SIZE_GENDER
+;wEnemyMon5:: party_struct wEnemyMon5
+;wEnemyMon5Gender::ds SIZE_GENDER
+;wEnemyMon6:: party_struct wEnemyMon6
+;wEnemyMon6Gender::ds SIZE_GENDER
+;;IF PARTY_LENGTH > 6
+;;	wEnemyMon7:: party_struct wEnemyMon7
+;;	wEnemyMon7Gender::ds SIZE_GENDER
+;;	IF PARTY_LENGTH > 7
+;;		wEnemyMon8:: party_struct wEnemyMon8
+;;		wEnemyMon8Gender::ds SIZE_GENDER
+;;	ENDC
+;;ENDC
+;
+;wEnemyMonOT::    ds NAME_LENGTH * PARTY_LENGTH
+;wEnemyMonNicks:: ds NAME_LENGTH * PARTY_LENGTH
+;wEnemyMonsEnd::
 
-wEnemyMonOT::    ds NAME_LENGTH * PARTY_LENGTH
-wEnemyMonNicks:: ds NAME_LENGTH * PARTY_LENGTH
-wEnemyMonsEnd::
-
-ENDU
+;ENDU
 
 
 wTrainerHeaderPtr:: ; da30
@@ -3520,18 +3509,19 @@ wDayCareInUse:: ; da48
 ; bit 2 - Egg waiting at Day Care
 	ds 1
 
-wDayCareMonName:: ds NAME_LENGTH ; Lady
-wDayCareMonOT::   ds NAME_LENGTH ; Lady
+wDayCareMonName:: ds NAME_LENGTH
+wDayCareMonOT::   ds NAME_LENGTH
 
 wDayCareMon:: box_struct wDayCareMon ; Lady
+;wDayCareMonGender::ds SIZE_GENDER
 
-wDayCareMon2Name:: ds NAME_LENGTH ; Man
-wDayCareMon2OT::   ds NAME_LENGTH ; Man
+wDayCareMon2Name:: ds NAME_LENGTH
+wDayCareMon2OT::   ds NAME_LENGTH
 
 wDayCareMon2:: box_struct wDayCareMon2 ; Man
+;wDayCareMon2Gender::ds SIZE_GENDER
 
 wMainDataEnd::
-
 
 wBoxDataStart::
 
@@ -3540,7 +3530,9 @@ wBoxSpecies:: ds MONS_PER_BOX + 1
 
 wBoxMons::
 wBoxMon1:: box_struct wBoxMon1 ; da96
-wBoxMon2:: ds box_struct_length * (MONS_PER_BOX + -1) ; dab7
+;wBoxMon1Gender::ds SIZE_GENDER
+wBoxMon2:: ds (box_struct_length -1) * (MONS_PER_BOX + -1) ; dab7
+;wBoxMon2:: ds (box_struct_length +(SIZE_GENDER)) * (MONS_PER_BOX + -1) ; dab7
 
 wBoxMonOT::    ds NAME_LENGTH * MONS_PER_BOX ; dd2a
 wBoxMonNicks:: ds NAME_LENGTH * MONS_PER_BOX ; de06
@@ -3548,12 +3540,87 @@ wBoxMonNicksEnd:: ; dee2
 
 wBoxDataEnd::
 
+wCurrentBoxNum:: ; d5a0
+; bits 0-6: box number
+; bit 7: whether the player has changed boxes before
+	ds 1
+
 wEXPBarPixelLength::  ds 1
 wEXPBarBaseEXP::      ds 3
 wEXPBarCurEXP::       ds 3
 wEXPBarNeededEXP::    ds 3
 wEXPBarKeepFullFlag:: ds 1
 
+SECTION "Battle Mons", WRAM0
+; LoadMonData copies mon data here
+wLoadedMon:: party_struct wLoadedMon ; cf98
+;wLoadedMonGender::ds SIZE_GENDER
+
+wPartyDataStart::
+wPartyCount::	ds 1 ; d163
+wPartySpecies::	ds PARTY_LENGTH ; d164
+wPartyEnd::	ds 1 ; d16a
+
+wPartyMons::
+wPartyMon1:: party_struct wPartyMon1 ; d16b
+;wPartyMon1Gender::ds SIZE_GENDER
+wPartyMon2:: party_struct wPartyMon2 ; d197
+;wPartyMon2Gender::ds SIZE_GENDER
+wPartyMon3:: party_struct wPartyMon3 ; d1c3
+;wPartyMon3Gender::ds SIZE_GENDER
+wPartyMon4:: party_struct wPartyMon4 ; d1ef
+;wPartyMon4Gender::ds SIZE_GENDER
+wPartyMon5:: party_struct wPartyMon5 ; d21b
+;wPartyMon5Gender::ds SIZE_GENDER
+wPartyMon6:: party_struct wPartyMon6 ; d247
+;wPartyMon6Gender::ds SIZE_GENDER
+;IF PARTY_LENGTH > 6
+;	wPartyMon7:: party_struct wPartyMon7
+;	wPartyMon7Gender::ds SIZE_GENDER
+;	IF PARTY_LENGTH > 7
+;		wPartyMon8:: party_struct wPartyMon8
+;		wPartyMon8Gender::ds SIZE_GENDER
+;	ENDC
+;ENDC
+
+wPartyMonOT::    ds NAME_LENGTH * PARTY_LENGTH ; d273
+wPartyMonNicks:: ds NAME_LENGTH * PARTY_LENGTH ; d2b5
+
+wPartyDataEnd::
+
+wEnemyMonNick:: ds NAME_LENGTH ; cfda
+wEnemyMon:: battle_struct wEnemyMon
+;wEnemyMonGender::ds SIZE_GENDER
+
+wBattleMonNick:: ds NAME_LENGTH ; d009
+wBattleMon:: battle_struct wBattleMon ; d014
+;wBattleMonGender::ds SIZE_GENDER
+
+wEnemyMons:: ; d8c4
+wEnemyMon1:: party_struct wEnemyMon1
+;wEnemyMon1Gender::ds SIZE_GENDER
+wEnemyMon2:: party_struct wEnemyMon2
+;wEnemyMon2Gender::ds SIZE_GENDER
+wEnemyMon3:: party_struct wEnemyMon3
+;wEnemyMon3Gender::ds SIZE_GENDER
+wEnemyMon4:: party_struct wEnemyMon4
+;wEnemyMon4Gender::ds SIZE_GENDER
+wEnemyMon5:: party_struct wEnemyMon5
+;wEnemyMon5Gender::ds SIZE_GENDER
+wEnemyMon6:: party_struct wEnemyMon6
+;wEnemyMon6Gender::ds SIZE_GENDER
+;IF PARTY_LENGTH > 6
+;	wEnemyMon7:: party_struct wEnemyMon7
+;	wEnemyMon7Gender::ds SIZE_GENDER
+;	IF PARTY_LENGTH > 7
+;		wEnemyMon8:: party_struct wEnemyMon8
+;		wEnemyMon8Gender::ds SIZE_GENDER
+;	ENDC
+;ENDC
+
+wEnemyMonOT::    ds NAME_LENGTH * PARTY_LENGTH
+wEnemyMonNicks:: ds NAME_LENGTH * PARTY_LENGTH
+wEnemyMonsEnd::
 
 SECTION "Stack", WRAMX[$df00], BANK[1]
 	ds $ff
@@ -3578,32 +3645,32 @@ Channel1MusicBank:: ; c103
 Channel1Flags:: ; c104
 ; 0: on/off
 ; 1: subroutine
-; 2: 
-; 3: 
+; 2:
+; 3:
 ; 4: noise sampling on/off
-; 5: 
-; 6: 
-; 7: 
+; 5:
+; 6:
+; 7:
 	ds 1
 Channel1Flags2:: ; c105
 ; 0: vibrato on/off
-; 1: 
+; 1:
 ; 2: duty cycle on/off
-; 3: 
-; 4: 
-; 5: 
-; 6: 
-; 7: 
+; 3:
+; 4:
+; 5:
+; 6:
+; 7:
 	ds 1
 Channel1Flags3:: ; c106
 ; 0: vibrato up/down
-; 1: 
-; 2: 
-; 3: 
-; 4: 
-; 5: 
-; 6: 
-; 7: 
+; 1:
+; 2:
+; 3:
+; 4:
+; 5:
+; 6:
+; 7:
 	ds 1
 Channel1MusicAddress:: ; c107
 	ds 2
@@ -3612,14 +3679,14 @@ Channel1LastMusicAddress:: ; c109
 ; could have been meant as a third-level address
 	ds 2
 Channel1NoteFlags:: ; c10d
-; 0: 
-; 1: 
-; 2: 
-; 3: 
-; 4: 
+; 0:
+; 1:
+; 2:
+; 3:
+; 4:
 ; 5: rest
-; 6: 
-; 7: 
+; 6:
+; 7:
 	ds 1
 Channel1Condition:: ; c10e
 ; used for conditional jumps
@@ -3691,7 +3758,7 @@ Channel1VibratoDelay:: ; c11f
 ; number of frames a note plays until vibrato starts
 	ds 1
 Channel1VibratoExtent:: ; c120
-; difference in 
+; difference in
 	ds 1
 Channel1VibratoRate:: ; c121
 ; counts down from a max of 15 frames

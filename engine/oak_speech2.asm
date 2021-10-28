@@ -134,7 +134,8 @@ OakSpeechSlidePicLeft:
 	coord hl, 0, 0
 	lb bc, 12, 11
 	call ClearScreenArea ; clear the name list text box
-	ld c, 10
+	;ld c, 10
+	ld c, 7
 	call DelayFrames
 	pop de
 	ld hl, wcd6d
@@ -226,34 +227,38 @@ OakSpeechSlidePicCommon:
 
 DisplayIntroNameTextBox:
 	push de
-	coord hl, 0, 0
-	ld b, $a
-	ld c, $9
-	call TextBoxBorder
-	coord hl, 3, 0
+	coord hl, 0, 0 ; pos x,y of box
+	;ld b, $a
+	;ld c, $9
+	ld b, ($a + (-2))
+	ld c, ($9 + 2) ; len x,y of box
+	;call TextBoxBorder
+	call TextBoxBorderless
+	;coord hl, 3, 0
+	coord hl, 1, 0
 	ld de, .namestring
-	call PlaceString
+	call PlaceString ; "Your name?"
 	pop de
-	coord hl, 2, 2
-	call PlaceString
+	coord hl, 3, 3
+	call PlaceString ; names list
 	call UpdateSprites
 	xor a
 	ld [wCurrentMenuItem], a
 	ld [wLastMenuItem], a
-	inc a
+	ld a, 1
 	ld [wTopMenuItemX], a
 	ld [wMenuWatchedKeys], a ; A_BUTTON
-	inc a
+	ld a, 3
 	ld [wTopMenuItemY], a
-	inc a
+	;ld a, 3
 	ld [wMaxMenuItem], a
 	jp HandleMenuInput
 
 .namestring
-	db "Name@"
+	db "Your name?@"
 
 DefaultNamesPlayer:
-	db   "New Name"
+	db   "New..."
 IF DEF(_HARD)
 	next "Yang"
 	next "Gary"
@@ -266,14 +271,14 @@ ENDC
 	db   "@"
 
 DefaultNamesGirl:
-	db   "New Name"
+	db   "New..."
 	next "Leaf"
 	next "Ashley"
 	next "Midori"
 	db   "@"
 
 DefaultNamesRival:
-	db   "New Name"
+	db   "New..."
 IF DEF(_HARD)
 	next "Yin"
 	next "Ash"
@@ -310,7 +315,7 @@ GetDefaultName:
 	jp CopyData
 
 DefaultNamesPlayerList:
-	db "New Name@"
+	db "New...@"
 RedDefaultName:
 IF DEF(_HARD)
 	db "Yang@"
@@ -323,7 +328,7 @@ ELSE
 ENDC
 
 DefaultNamesRivalList:
-	db "New Name@"
+	db "New...@"
 RivalDefaultName:
 IF DEF(_HARD)
 	db "Yin@"
@@ -336,7 +341,7 @@ ELSE
 ENDC
 
 DefaultNamesGirlList:
-	db "New Name@"
+	db "New...@"
 LeafDefaultName:
 	db "Leaf@"
 	db "Ashley@"

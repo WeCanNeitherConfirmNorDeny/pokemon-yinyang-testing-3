@@ -236,6 +236,8 @@ ItemDescriptionPointers:
 	db "@"
 	TX_FAR _OceanBerryDescription
 	db "@"
+	TX_FAR _MountainBerryDescription
+	db "@"
 	TX_FAR _SnowglobeDescription
 	db "@"
 	TX_FAR _MirrorDescription
@@ -605,6 +607,8 @@ ItemDescriptionPointers_Mart:
 	db "@"
 	TX_FAR _OceanBerryDescription_Mart
 	db "@"
+	TX_FAR _MountainBerryDescription_Mart
+	db "@"
 	TX_FAR _SnowglobeDescription_Mart
 	db "@"
 	TX_FAR _MirrorDescription_Mart
@@ -721,3 +725,4 @@ ItemDescriptionPointers_Mart:
 	db "@"
 	TX_FAR _TM50Description_Mart
 	db "@"
+

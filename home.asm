@@ -429,7 +429,7 @@ PartyMenuInit::
 	call BankswitchHome
 	call LoadHpBarAndStatusTilePatterns
 	ld hl, wd730
-	set 6, [hl] ; turn off letter printing delay
+	; set 6, [hl] ; turn off letter printing delay
 	xor a ; PLAYER_PARTY_DATA
 	ld [wMonDataLocation], a
 	ld [wMenuWatchMovingOutOfBounds], a
@@ -577,6 +577,7 @@ PrintStatusConditionNotFainted:
 ; INPUT:
 ; hl = destination address
 ; [wLoadedMonLevel] = level
+; XXX todo: remove all the logic for hiding the ":L" and make it always show
 PrintLevel::
 	ld a,$6e ; ":L" tile ID
 	ld [hli],a

@@ -35,6 +35,8 @@ const_value = 1
 	const TERU_SAMA_1B ; $1B
 	const TERU_SAMA_1C ; $1C
 
+const_value = $1D
+
 	const ESCAPE_ROPE   ; $1D
 	const REPEL         ; $1E
 	const OLD_AMBER     ; $1F
@@ -118,14 +120,18 @@ const_value = 1
 	const CHERI_BERRY   ; $69
 	const LUM_BERRY     ; $6A
 	const ACAI_BERRY    ; $6B
+
+; Yin/Yang Items
+; berries:
 	const GOLD_BERRY    ; $6C
 	const OCEAN_BERRY   ; $6D
-
-; Dummy item used for Ferry list
-	const GO_HOME       ; $6E
-
+	const MOUNTAIN_BERRY ;$6E
+; other:
 	const SNOWGLOBE     ; $6F
 	const MIRROR        ; $70
+
+; Dummy item used for Ferry list
+	const GO_HOME       ; $
 
 ; Don't call actual item scripts
 const_value = $C4
@@ -185,3 +191,8 @@ const_value = $C4
 	const TM_48         ; $F8
 	const TM_49         ; $F9
 	const TM_50         ; $FA
+	const TM_51         ; $FA
+	const TM_52         ; $FA
+	const TM_53         ; $FA
+	const TM_54         ; $FA
+	const TM_55         ; $FA

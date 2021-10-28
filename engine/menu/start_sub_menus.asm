@@ -519,6 +519,9 @@ UsableItems_PartyMenu:
 	db CHERI_BERRY
 	db LUM_BERRY
 	db ACAI_BERRY
+	db GOLD_BERRY
+	db OCEAN_BERRY
+	db MOUNTAIN_BERRY
 	db $ff
 
 ; items which close the item menu when used
@@ -631,16 +634,20 @@ DrawTrainerInfo:
 	coord hl, 6, 9
 	ld de,TrainerInfo_BadgesText
 	call PlaceString
-	coord hl, 2, 2
+	;coord hl, 2, 2
+	coord hl, 1, 2
 	ld de,TrainerInfo_NameMoneyTimeText
 	call PlaceString
 	coord hl, 7, 2
 	ld de,wPlayerName
-	call PlaceString
+	call PlaceString ; display player name
 	coord hl, 8, 4
 	ld de,wPlayerMoney
-	ld c,$e3
-	call PrintBCDNumber
+	;ld c,$e3
+	;call PrintBCDNumber
+	ld c,7
+	ld b,3
+	call PrintNumber ; display player money
 	coord hl, 9, 6
 	ld de,wPlayTimeHours ; hours
 	lb bc, LEFT_ALIGN | 1, 3
@@ -649,15 +656,15 @@ DrawTrainerInfo:
 	inc hl
 	ld de,wPlayTimeMinutes ; minutes
 	lb bc, LEADING_ZEROES | 1, 2
-	jp PrintNumber
+	jp PrintNumber ; display play time
 
 TrainerInfo_FarCopyData:
 	ld a,BANK(TrainerInfoTextBoxTileGraphics)
 	jp FarCopyData2
 
 TrainerInfo_NameMoneyTimeText:
-	db   "Name:"
-	next "Money "
+	db   "Name "
+	next "Money ¥"
 	next "Time @"
 
 ; $76 is a circle tile

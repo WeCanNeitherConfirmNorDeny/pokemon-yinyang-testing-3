@@ -1790,7 +1790,7 @@ LoadBattleMonFromParty:
 	ld a, [wWhichPokemon]
 	ld bc, wPartyMon2 - wPartyMon1
 	ld hl, wPartyMon1Species
-	call AddNTimes
+	call AddNTimes ; hl points to selected party mon
 	ld de, wBattleMonSpecies
 	ld bc, wBattleMonDVs - wBattleMonSpecies
 	call CopyData
@@ -1806,8 +1806,16 @@ LoadBattleMonFromParty:
 	ld bc, wBattleMonPP - wBattleMonLevel
 	call CopyData
 	ld de, wBattleMonGender
+	ld bc, wBattleMonGender - wBattleMonLevel
+	add hl, bc
 	ld bc, SIZE_GENDER
 	call CopyData
+
+	;ld de, wBattleMonSpecies
+	;;ld bc, (wBattleMon@end -1) - wBattleMonSpecies
+	;ld bc, (wBattleMon@end -1) - wBattleMonSpecies
+	;call CopyData
+
 	ld a, [wBattleMonSpecies2]
 	ld [wd0b5], a
 	call GetMonHeader
@@ -1854,8 +1862,15 @@ LoadEnemyMonFromParty:
 	ld bc, wEnemyMonPP - wEnemyMonLevel
 	call CopyData
 	ld de, wEnemyMonGender
+	ld bc, wEnemyMonGender - wEnemyMonLevel
+	add hl, bc
 	ld bc, SIZE_GENDER
 	call CopyData
+
+	;ld de, wEnemyMonSpecies
+	;ld bc, (wEnemyMon@end -1) - wEnemyMonSpecies
+	;call CopyData
+
 	ld a, [wEnemyMonSpecies]
 	ld [wd0b5], a
 	call GetMonHeader
@@ -1867,7 +1882,8 @@ LoadEnemyMonFromParty:
 	call CopyData
 	ld hl, wEnemyMonLevel
 	ld de, wEnemyMonUnmodifiedLevel ; block of memory used for unmodified stats
-	ld bc, 1 + NUM_STATS * 2
+	;ld bc, 1 + NUM_STATS * 2
+	ld bc, 1 + (NUM_STATS * 2)
 	call CopyData
 
 	call ApplyBurnAndParalysisPenaltiesToEnemy
@@ -2014,14 +2030,18 @@ DrawPlayerHUDAndHPBar:
 	call PrintPlayerMonShiny
 	coord de, 17, 11
 	callab PrintEXPBar
-	ld hl, wBattleMonSpecies
-	ld de, wLoadedMon
-	ld bc, wBattleMonDVs - wBattleMonSpecies
-	call CopyData
-	ld hl, wBattleMonLevel
-	ld de, wLoadedMonLevel
-	ld bc, wBattleMonPP - wBattleMonLevel
-	call CopyData
+	;ld hl, wBattleMonSpecies			;
+	;ld de, wLoadedMon				;
+	;ld bc, wBattleMonDVs - wBattleMonSpecies	;
+	;call CopyData					;
+	;ld hl, wBattleMonLevel				;
+	;ld de, wLoadedMonLevel				;
+	;ld bc, wBattleMonPP - wBattleMonLevel		;
+	;call CopyData					;
+	ld hl, wBattleMonSpecies	; HAX
+	ld de, wLoadedMon		; HAX
+	ld bc, battle_struct_length	; HAX - battle_struct and party_struct are identical
+	call CopyData			; HAX
 	coord hl, 14, 8
 	push hl
 	inc hl
@@ -5383,11 +5403,11 @@ IncrementMovePP:
 ; function to adjust the base damage of an attack to account for type effectiveness
 AdjustDamageForMoveType:
 ; values for player turn
-	ld hl,wBattleMonType
+	ld hl,wBattleMonTypes
 	ld a,[hli]
 	ld b,a    ; b = type 1 of attacker
 	ld c,[hl] ; c = type 2 of attacker
-	ld hl,wEnemyMonType
+	ld hl,wEnemyMonTypes
 	ld a,[hli]
 	ld d,a    ; d = type 1 of defender
 	ld e,[hl] ; e = type 2 of defender
@@ -5397,11 +5417,11 @@ AdjustDamageForMoveType:
 	and a
 	jr z,.next
 ; values for enemy turn
-	ld hl,wEnemyMonType
+	ld hl,wEnemyMonTypes
 	ld a,[hli]
 	ld b,a    ; b = type 1 of attacker
 	ld c,[hl] ; c = type 2 of attacker
-	ld hl,wBattleMonType
+	ld hl,wBattleMonTypes
 	ld a,[hli]
 	ld d,a    ; d = type 1 of defender
 	ld e,[hl] ; e = type 2 of defender
@@ -5429,11 +5449,11 @@ AdjustDamageForMoveType:
 	ld hl, H_MULTIPLIER
 	ld [hl], 3
 	call Multiply
-	
+
 	ld [hl], 2
 	ld b, 4
 	call Divide
-	
+
 	ld hl,wDamageMultipliers
 	set 7,[hl] ; STAB
 .skipSameTypeAttackBonus
@@ -5459,11 +5479,11 @@ AdjustDamageForMoveType:
 	inc hl
 	ld a,[hl] ; a = damage multiplier
 	ld [H_MULTIPLIER],a
-	
+
 ; done if type immunity
 	and a
 	jr z, .typeImmunityDone
-	
+
 ; update damage multipliers
 	cp $a
 	ld hl, wDamageMultipliers
@@ -5488,7 +5508,7 @@ AdjustDamageForMoveType:
 	inc hl
 	inc hl
 	jp .loop
-	
+
 .typeImmunityDone
 	call StoreDamage
 	ld a, $7f
@@ -5498,7 +5518,7 @@ AdjustDamageForMoveType:
 	pop bc
 	pop hl
 	ret
-	
+
 StoreDamage:
 ; store the result of those multiply/divide operations back in wDamage
 	ld hl, wDamage
@@ -5516,7 +5536,7 @@ StoreDamage:
 AIGetTypeEffectiveness:
 	ld a,[wEnemyMoveType]
 	ld d,a                    ; d = type of enemy move
-	ld hl,wBattleMonType
+	ld hl,wBattleMonTypes
 	ld b,[hl]              ; b = type 1 of player's pokemon
 	ld a,10
 	ld [H_MULTIPLIER],a           ; initialize [wd11e] to neutral effectiveness
@@ -5540,7 +5560,7 @@ AIGetTypeEffectiveness:
 	ld a,[hl]
 	ld [H_MULTIPLIER],a           ; store damage multiplier
 .start2
-    ld hl,wBattleMonType+1
+    ld hl,wBattleMonTypes+1
     ld a,[hl]
     cp b
     jr nz,.checksecondtype
@@ -6380,6 +6400,8 @@ LoadEnemyMonData:
 	;ld a, [wLinkState]
 	;cp LINK_STATE_BATTLING
 	;jp z, LoadEnemyMonFromParty
+	ld a, [wEnemyMonGender2]
+	ld [wEnemyMonGender], a
 	ld a, [wEnemyMonSpecies2]
 	ld [wEnemyMonSpecies], a
 	ld [wd0b5], a
@@ -6406,9 +6428,9 @@ LoadEnemyMonData:
 ;	call BattleRandom
 ;	bit 0, a
 	ld a, ATKDEFDV_SHINY
-;	jr z, :+
+;	jr z, .z
 ;	ld a, ATKDEFDV_SHINY_FEMALE
-;:
+;.z
 	ld b, SPDSPCDV_SHINY
 	ld hl, wExtraFlags
 	bit 0, [hl]
@@ -6416,8 +6438,12 @@ LoadEnemyMonData:
 	jr nz, .storeDVs
 ; random sex for wild mon
 	call BattleRandom
-	ld [wEnemyMonGender], a ; initialise to random gender
-	ld [wEnemyMonGender2], a
+	ld b, a
+	call BattleRandom
+	rr a
+	xor b
+	ld [wUnused_BYTE], a ; initialise to random gender
+	;ld [wEnemyMonGender2], a
 ; random DVs for wild mon
 	call BattleRandom
 	ld b, a
@@ -6426,6 +6452,9 @@ LoadEnemyMonData:
 	ld hl, wEnemyMonDVs
 	ld [hli], a
 	ld [hl], b
+		ld hl, wEnemyMonGender
+		ld a, [wUnused_BYTE]
+		ld [hl], a
 	ld de, wEnemyMonLevel
 	ld a, [wCurEnemyLVL]
 	ld [de], a
@@ -6445,9 +6474,11 @@ LoadEnemyMonData:
 	ld a, [wEnemyMonMaxHP]
 	ld [hli], a
 	ld a, [wEnemyMonMaxHP+1]
-	ld [hli], a
+	;ld [hli], a
+	ld [hl], a
+	ld hl, wEnemyMonStatus
 	xor a
-	inc hl
+	;inc hl
 	ld [hl], a ; init status to 0
 	jr .copyTypes
 ; if it's a trainer mon, copy the HP and status from the enemy party data
@@ -6468,16 +6499,24 @@ LoadEnemyMonData:
 	jr .copyTypes
 .copyTypes
 	ld hl, wMonHTypes
-	ld de, wEnemyMonType
-	ld a, [hli]            ; copy type 1
+	ld de, wEnemyMonTypes
+	REPT (NUM_TYPES -1)
+		ld a, [hli]            ; copy type 1
+		ld [de], a
+		inc de
+	ENDR
+	;ld a, [hli]            ; copy type 2
+	ld a, [hl]            ; copy type 2
 	ld [de], a
-	inc de
-	ld a, [hli]            ; copy type 2
+	;inc de
+	ld hl, wMonHCatchRate
+	ld de, wEnemyMonCatchRate
+	;ld a, [hli]            ; copy catch rate
+	ld a, [hl]            ; copy catch rate
 	ld [de], a
-	inc de
-	ld a, [hli]            ; copy catch rate
-	ld [de], a
-	inc de
+	;inc de
+	ld hl, wMonHMoves
+	ld de, wEnemyMonMoves
 	ld a, [wIsInBattle]
 	cp $2 ; is it a trainer battle?
 	jr nz, .copyStandardMoves
@@ -6492,16 +6531,20 @@ LoadEnemyMonData:
 .copyStandardMoves
 ; for a wild mon, first clear the moves before copying
 	xor a
+	REPT (NUM_MOVES -1)
+		ld [de], a
+		inc de
+	ENDR
+	;ld [de], a
+	;inc de
+	;ld [de], a
+	;inc de
 	ld [de], a
-	inc de
-	ld [de], a
-	inc de
-	ld [de], a
-	inc de
-	ld [de], a
-	dec de
-	dec de
-	dec de
+	REPT (NUM_MOVES -1)
+		dec de
+	ENDR
+	;dec de
+	;dec de
 	xor a
 	ld [wLearningMovesFromDayCare], a
 	predef WriteMonMoves ; get moves based on current level
@@ -9023,7 +9066,7 @@ SilverWindEffect:
 	call BattleRandom
 	cp $1a
 	ret nc
-	
+
 	ld a, [H_WHOSETURN]
 	and a
 	jr z, .notEnemyTurn
@@ -9080,7 +9123,7 @@ GrowthEffect:
 	ld a, ATTACK_UP1_EFFECT
 	ld [wPlayerMoveEffect], a
 	jp StatModifierUpEffect
-	
+
 HoneClawsEffect:
 	ld a, [H_WHOSETURN]
 	and a
@@ -9249,8 +9292,7 @@ PhysicalSpecialSplit:
 
 PrintEnemyMonGender: ; called during battle
 	; get gender
-	ld a, [wEnemyMonSpecies]
-	ld de, wEnemyMonGender
+	ld a, [wEnemyMonGender]
 	call PrintGenderCommon
 	coord hl, 9, 1
 	ld [hl], a
@@ -9258,17 +9300,15 @@ PrintEnemyMonGender: ; called during battle
 
 PrintPlayerMonGender: ; called during battle
 	; get gender
-	ld a, [wBattleMonSpecies]
-	ld de, wBattleMonGender
+	ld a, [wBattleMonGender]
 	call PrintGenderCommon
 	coord hl, 17, 8
 	ld [hl], a
 	ret
 
 PrintGenderCommon: ; used by both routines
-	ld [wGenderTemp], a
-	callba GetMonGender
-	ld a, [wGenderTemp]
+	;ld [wGenderTemp], a
+	;callba GetMonGender
 	and a
 	jr z, .noGender
 	dec a

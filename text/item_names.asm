@@ -108,6 +108,8 @@ ItemNames:
 	db "Acai Berry@"
 	db "[SHINY]Gold Berry@"
 	db "Ocean Berry@"
+	db "Mountain Berry@"
 	db "Snowglobe@"
 	db "Mirror@"
 	db "Go Home@"
+

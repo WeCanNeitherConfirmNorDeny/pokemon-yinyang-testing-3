@@ -199,38 +199,29 @@ CopyScreenTileBufferToVRAM::
 
 BlackScreen::
 	ld a, $de
-	ld bc, 20 * 18
-	inc b
-	coord hl, 0, 0
-	;ld a, " "
-.loop
-	ld [hli], a
-	dec c
-	jr nz, .loop
-	dec b
-	jr nz, .loop
-	jp Delay3
+	jr FillScreen
 ClearScreen::
 ; Clear wTileMap, then wait
 ; for the bg map to update.
 	ld a, " "
-	ld bc, 20 * 18
-	inc b
-	coord hl, 0, 0
-	;ld a, " "
-.loop
-	ld [hli], a
-	dec c
-	jr nz, .loop
-	dec b
-	jr nz, .loop
-	jp Delay3
+	jr FillScreen
+	;ld bc, 20 * 18
+	;inc b
+	;coord hl, 0, 0
+	;;ld a, " "
+;.loop
+	;ld [hli], a
+	;dec c
+	;jr nz, .loop
+	;dec b
+	;jr nz, .loop
+	;jp Delay3
 ; Fill screen with tile in 'a'
 FillScreen::
+	;ld a, " "
 	ld bc, 20 * 18
 	inc b
 	coord hl, 0, 0
-	;ld a, " "
 .loop
 	ld [hli], a
 	dec c

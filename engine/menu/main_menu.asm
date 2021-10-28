@@ -54,9 +54,9 @@ MainMenu:
 	res 6,[hl]
 	call UpdateSprites
 	xor a
-	ld [wCurrentMenuItem],a
-	ld [wLastMenuItem],a
-	ld [wMenuJoypadPollCount],a
+	ld [wCurrentMenuItem],a     ; initialise menu
+	ld [wLastMenuItem],a        ; initialise menu
+	ld [wMenuJoypadPollCount],a ; initialise menu
 	inc a
 	ld [wTopMenuItemX],a
 	inc a
@@ -127,7 +127,8 @@ MainMenu:
 InitOptions:
 	ld a,1 ; no delay
 	ld [wLetterPrintingDelayFlags],a
-	ld a,0 ; fast speed
+	;ld a,0 ; fast speed
+	xor a
 	ld [wOptions],a
 	ret
 
@@ -427,40 +428,55 @@ SaveScreenInfoText:
 	next "Time@"
 
 DisplayOptionMenu:
+	;coord hl, 0, 0
+	;ld b,3
+	;ld c,18
+	;call TextBoxBorderless
+	;coord hl, 0, 5
+	;ld b,3
+	;ld c,18
+	;call TextBoxBorderless
+	;coord hl, 0, 10
+	;ld b,3
+	;ld c,18
+	;call TextBoxBorderless
 	coord hl, 0, 0
-	ld b,3
-	ld c,18
-	call TextBoxBorder
-	coord hl, 0, 5
-	ld b,3
-	ld c,18
-	call TextBoxBorder
-	coord hl, 0, 10
-	ld b,3
-	ld c,18
-	call TextBoxBorder
-	coord hl, 1, 1
+	ld b,SCREEN_HEIGHT
+	ld c,SCREEN_WIDTH
+	call TextBoxBorderless ; HAX - 1 window/boxes with borderless
+	;coord hl, 1, 0
+	coord hl, OPTION_MENU_LABEL_X_TEXT_SPEED, OPTION_MENU_LABEL_Y_TEXT_SPEED
 	ld de,TextSpeedOptionText
 	call PlaceString
-	coord hl, 1, 6
+	;coord hl, 1, 4
+	coord hl, OPTION_MENU_LABEL_X_BATTLE_ANIMATION, OPTION_MENU_LABEL_Y_BATTLE_ANIMATION
 	ld de,BattleAnimationOptionText
 	call PlaceString
-	coord hl, 1, 11
+	;coord hl, 1, 8
+	coord hl, OPTION_MENU_LABEL_X_BATTLE_STYLE, OPTION_MENU_LABEL_Y_BATTLE_STYLE
 	ld de,BattleStyleOptionText
 	call PlaceString
-	coord hl, 2, 16
+	;coord hl, 1, 12
+	coord hl, OPTION_MENU_LABEL_X_POKEMON_OBEY, OPTION_MENU_LABEL_Y_POKEMON_OBEY
+	ld de,PokemonObeyOptionText
+	call PlaceString
+	;coord hl, 1, 16
+	coord hl, OPTION_MENU_LABEL_X_CANCELNEXT, OPTION_MENU_LABEL_Y_CANCELNEXT
 	ld de,OptionMenuCancelText
 	call PlaceString
+	;ld a,5
+	;ld [wMaxMenuItem],a
 	xor a
 	ld [wCurrentMenuItem],a
 	ld [wLastMenuItem],a
 	inc a
 	ld [wLetterPrintingDelayFlags],a
 	ld [wUnusedCD40],a
-	ld a,3 ; text speed cursor Y coordinate
+	ld a,OPTION_MENU_Y_TEXT_SPEED
 	ld [wTopMenuItemY],a
 	call SetCursorPositionsFromOptions
-	ld a,[wOptionsTextSpeedCursorX] ; text speed cursor X coordinate
+	;ld a,[wOptionsTextSpeedCursorX] ; text speed cursor X coordinate
+	ld a,OPTION_MENU_X_TEXT_SPEED
 	ld [wTopMenuItemX],a
 	ld a,$01
 	ld [H_AUTOBGTRANSFERENABLED],a ; enable auto background transfer
@@ -481,7 +497,7 @@ DisplayOptionMenu:
 	bit 0,b ; A button pressed?
 	jr z,.checkDirectionKeys
 	ld a,[wTopMenuItemY]
-	cp a,16 ; is the cursor on Cancel?
+	cp a,OPTION_MENU_LABEL_Y_CANCELNEXT ; is the cursor on Cancel?
 	jr nz,.loop
 .exitMenu
 	ld a,SFX_PRESS_AB
@@ -497,52 +513,85 @@ DisplayOptionMenu:
 	jr nz,.downPressed
 	bit 6,b ; Up pressed?
 	jr nz,.upPressed
-	cp a,8 ; cursor in Battle Animation section?
+	cp a,OPTION_MENU_Y_BATTLE_ANIMATION ; cursor in Battle Animation section?
 	jr z,.cursorInBattleAnimation
-	cp a,13 ; cursor in Battle Style section?
+	cp a,OPTION_MENU_Y_BATTLE_STYLE ; cursor in Battle Style section?
 	jr z,.cursorInBattleStyle
-	cp a,16 ; cursor on Cancel?
+	cp a,OPTION_MENU_Y_POKEMON_OBEY ; cursor in Pokemon Obey section?
+	jp z,.cursorInPokemonObey
+	cp a,OPTION_MENU_Y_CANCELNEXT ; cursor on Cancel?
 	jr z,.loop
+	;jp z,.cursorInMeta
 .cursorInTextSpeed
-	bit 5,b ; Left pressed?
-	jp nz,.pressedLeftInTextSpeed
-	jp .pressedRightInTextSpeed
+	;bit 5,b ; Left pressed?
+	;jp nz,.pressedLeftInTextSpeed
+	;jp .pressedRightInTextSpeed
+	jr ._cursorInTextSpeed
 .downPressed
-	cp a,16
-	ld b,-13
+; compare current y coordinate over a pattern downwards,
+; and based on predicaments we move the cursor to new positions
+	cp a,OPTION_MENU_Y_CANCELNEXT
+	ld b,OPTION_MENU_Y_TEXT_SPEED
 	ld hl,wOptionsTextSpeedCursorX
 	jr z,.updateMenuVariables
-	ld b,5
-	cp a,3
+	ld b,OPTION_MENU_Y_BATTLE_ANIMATION
+	cp a,OPTION_MENU_Y_TEXT_SPEED
 	inc hl
 	jr z,.updateMenuVariables
-	cp a,8
+	ld b,OPTION_MENU_Y_BATTLE_STYLE
+	cp a,OPTION_MENU_Y_BATTLE_ANIMATION
 	inc hl
 	jr z,.updateMenuVariables
-	ld b,3
+	ld b,OPTION_MENU_Y_POKEMON_OBEY
+	cp a,OPTION_MENU_Y_BATTLE_STYLE
+	;inc hl
+	jr z,.updateMenuVariables
+	ld b,OPTION_MENU_Y_CANCELNEXT
+	cp a,OPTION_MENU_Y_POKEMON_OBEY
 	inc hl
+	jr z,.updateMenuVariables
 	jr .updateMenuVariables
 .upPressed
-	cp a,8
-	ld b,-5
+; compare current y coordinate over a pattern upwards,
+; and based on predicaments we move the cursor to new positions
+;	text speed
+; 	battyle anim
+; 	battle style
+; 	mon obey
+; 	cancel
+	cp a,OPTION_MENU_Y_BATTLE_ANIMATION
+	ld b,OPTION_MENU_Y_TEXT_SPEED
 	ld hl,wOptionsTextSpeedCursorX
 	jr z,.updateMenuVariables
-	cp a,13
+	cp a,OPTION_MENU_Y_TEXT_SPEED
+	ld b,OPTION_MENU_Y_CANCELNEXT
 	inc hl
 	jr z,.updateMenuVariables
-	cp a,16
-	ld b,-3
+	cp a,OPTION_MENU_Y_BATTLE_STYLE
+	ld b,OPTION_MENU_Y_BATTLE_ANIMATION
 	inc hl
 	jr z,.updateMenuVariables
-	ld b,13
+	cp a,OPTION_MENU_Y_POKEMON_OBEY
+	ld b,OPTION_MENU_Y_BATTLE_STYLE
 	inc hl
+	jr z,.updateMenuVariables
+	cp a,OPTION_MENU_Y_CANCELNEXT
+	ld b,OPTION_MENU_Y_POKEMON_OBEY
+	;inc hl
+	;jr z,.updateMenuVariables
 .updateMenuVariables
-	add b
+	;add b
+	ld a,b
 	ld [wTopMenuItemY],a
 	ld a,[hl]
 	ld [wTopMenuItemX],a
 	call PlaceUnfilledArrowMenuCursor
 	jp .loop
+._cursorInTextSpeed
+	ld a,[wOptionsTextSpeedCursorX] ; text speed cursor X coordinate
+	xor a,$0b ; toggle between 1 and 10
+	ld [wOptionsTextSpeedCursorX],a
+	jp .eraseOldMenuCursor
 .cursorInBattleAnimation
 	ld a,[wOptionsBattleAnimCursorX] ; battle animation cursor X coordinate
 	xor a,$0b ; toggle between 1 and 10
@@ -553,34 +602,45 @@ DisplayOptionMenu:
 	xor a,$0b ; toggle between 1 and 10
 	ld [wOptionsBattleStyleCursorX],a
 	jp .eraseOldMenuCursor
-.pressedLeftInTextSpeed
-	ld a,[wOptionsTextSpeedCursorX] ; text speed cursor X coordinate
-	cp a,1
-	jr z,.updateTextSpeedXCoord
-	cp a,7
-	jr nz,.fromSlowToMedium
-	sub a,6
-	jr .updateTextSpeedXCoord
-.fromSlowToMedium
-	sub a,7
-	jr .updateTextSpeedXCoord
-.pressedRightInTextSpeed
-	ld a,[wOptionsTextSpeedCursorX] ; text speed cursor X coordinate
-	cp a,14
-	jr z,.updateTextSpeedXCoord
-	cp a,7
-	jr nz,.fromFastToMedium
-	add a,7
-	jr .updateTextSpeedXCoord
-.fromFastToMedium
-	add a,6
-.updateTextSpeedXCoord
-	ld [wOptionsTextSpeedCursorX],a ; text speed cursor X coordinate
+.cursorInPokemonObey
+	ld a,[wOptionsPokemonObeyCursorX] ; pokemon obey cursor X coordinate
+	xor a,$0b ; toggle between 1 and 10
+	ld [wOptionsPokemonObeyCursorX],a
 	jp .eraseOldMenuCursor
+.cursorInMeta
+	ld a,[wOptionsMetaCursorX] ; meta cursor X coordinate
+	xor a,$0b ; toggle between 1 and 10
+	ld [wOptionsMetaCursorX],a
+	jp .eraseOldMenuCursor
+;.pressedLeftInTextSpeed
+;	ld a,[wOptionsTextSpeedCursorX] ; text speed cursor X coordinate
+;	cp a,1
+;	jr z,.updateTextSpeedXCoord
+;	cp a,7
+;	jr nz,.fromSlowToMedium
+;	sub a,6
+;	jr .updateTextSpeedXCoord
+;.fromSlowToMedium
+;	sub a,7
+;	jr .updateTextSpeedXCoord
+;.pressedRightInTextSpeed
+;	ld a,[wOptionsTextSpeedCursorX] ; text speed cursor X coordinate
+;	cp a,14
+;	jr z,.updateTextSpeedXCoord
+;	cp a,7
+;	jr nz,.fromFastToMedium
+;	add a,7
+;	jr .updateTextSpeedXCoord
+;.fromFastToMedium
+;	add a,6
+;.updateTextSpeedXCoord
+;	ld [wOptionsTextSpeedCursorX],a ; text speed cursor X coordinate
+;	jp .eraseOldMenuCursor
 
 TextSpeedOptionText:
 	db   "Text Speed:"
-	next " Fast  Normal Slow@"
+	;next " Fast  Normal Slow@"
+	next " Fast     Normal@"
 
 BattleAnimationOptionText:
 	db   "Battle Effects:"
@@ -590,8 +650,13 @@ BattleStyleOptionText:
 	db   "Battle Style:"
 	next " Shift    Set@"
 
+PokemonObeyOptionText:
+	db   "#mon Obey:"
+	next " Caught   Traded@"
+
 OptionMenuCancelText:
-	db "Back@"
+	db " Back@"
+	;db " Back     Next@"
 
 ; sets the options variable according to the current placement of the menu cursors in the options menu
 SetOptionsFromCursorPositions:
@@ -621,9 +686,19 @@ SetOptionsFromCursorPositions:
 	jr z,.battleStyleShift
 .battleStyleSet
 	set 6,d
-	jr .storeOptions
+	jr .pokemonObey
 .battleStyleShift
 	res 6,d
+.pokemonObey
+	ld hl,wExtraFlags
+	ld a,[wOptionsPokemonObeyCursorX] ; pokemon obey cursor X coordinate
+	dec a
+	jr z,.pokemonObeyTraded
+.pokemonObeyCaught
+	set 2,[hl]
+	jr .storeOptions
+.pokemonObeyTraded
+	res 2,[hl]
 .storeOptions
 	ld a,d
 	ld [wOptions],a
@@ -642,26 +717,38 @@ SetCursorPositionsFromOptions:
 	dec hl
 	ld a,[hl]
 	ld [wOptionsTextSpeedCursorX],a ; text speed cursor X coordinate
-	coord hl, 0, 3
+	coord hl, 0, OPTION_MENU_Y_TEXT_SPEED
 	call .placeUnfilledRightArrow
+.initialiseAnimationCursorX
 	sla c
 	ld a,1 ; On
 	jr nc,.storeBattleAnimationCursorX
 	ld a,10 ; Off
 .storeBattleAnimationCursorX
 	ld [wOptionsBattleAnimCursorX],a ; battle animation cursor X coordinate
-	coord hl, 0, 8
+	coord hl, 0, OPTION_MENU_Y_BATTLE_ANIMATION
 	call .placeUnfilledRightArrow
+.initialiseStyleCursorX
 	sla c
 	ld a,1
 	jr nc,.storeBattleStyleCursorX
 	ld a,10
 .storeBattleStyleCursorX
 	ld [wOptionsBattleStyleCursorX],a ; battle style cursor X coordinate
-	coord hl, 0, 13
+	coord hl, 0, OPTION_MENU_Y_BATTLE_STYLE
+	call .placeUnfilledRightArrow
+.initialisePokemonObey
+	ld a,[wExtraFlags]
+	bit BIT_MONS_OBEY,a
+	ld a,1
+	jr z,.storePokemonObeyCursorX
+	ld a,10
+.storePokemonObeyCursorX
+	ld [wOptionsPokemonObeyCursorX],a ; pokemon obey cursor X coordinate
+	coord hl, 0, OPTION_MENU_Y_POKEMON_OBEY
 	call .placeUnfilledRightArrow
 ; cursor in front of Cancel
-	coord hl, 0, 16
+	coord hl, 0, OPTION_MENU_Y_CANCELNEXT
 	ld a,1
 .placeUnfilledRightArrow
 	ld e,a
@@ -675,10 +762,13 @@ SetCursorPositionsFromOptions:
 ; 00: X coordinate of menu cursor
 ; 01: delay after printing a letter (in frames)
 TextSpeedOptionData:
-	db 14,1 ; Slow
-	db  7,1 ; Medium
-	db  1,0 ; Fast
-	db 1 ; default X coordinate (Medium)
+	;db 14,3 ; Slow
+	;db  7,1 ; Medium
+	;db  1,0 ; Fast
+	;db 1 ; default X coordinate (Medium)
+	db 10,1 ; Normal
+	db 1,0 ; Fast
+	db 1 ; default X coordinate (Fast)
 	db $ff ; terminator
 
 CheckForPlayerNameInSRAM:

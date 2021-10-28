@@ -303,18 +303,18 @@ OaksLabScript9:
 	ld [hSpriteIndexOrTextID], a
 	call DisplayTextID
 	ld a, [wRivalStarterBallSpriteIndex]
-	cp $2
-	jr nz, .asm_1cd28
+	cp $2 ; switch - case 1
+	jr nz, .asm_case2
 	ld a, HS_STARTER_BALL_1
-	jr .asm_1cd32
-.asm_1cd28
+	jr .asm_endsw
+.asm_case2
 	cp $3
-	jr nz, .asm_1cd30
+	jr nz, .asm_case3
 	ld a, HS_STARTER_BALL_2
-	jr .asm_1cd32
-.asm_1cd30
+	jr .asm_endsw
+.asm_case3
 	ld a, HS_STARTER_BALL_3
-.asm_1cd32
+.asm_endsw
 	ld [wMissableObjectIndex], a
 	predef HideObject
 	call Delay3
@@ -929,7 +929,10 @@ OaksLabMonChoiceMenu:
 	IF DEF(_HARD)
 		ld a, STARTER_LEVEL
 	ELSE
-		ld a, (STARTER_LEVEL *10)
+		call Random
+		and $3
+		xor %00011101
+		add a, (STARTER_LEVEL *3) ; semi-random boost for Yin
 	ENDC
 	ld [wCurEnemyLVL], a
 	ld a, [wcf91]

@@ -5,26 +5,19 @@
 ;
 ; start_items
 ; gives a few items to make things faster
-; INPUT -
-;	c = quantity
+;
 start_items:
-	and c
-	jr nz, :+
-		ld c, $ff
-	:
+; items you want 99 of
+	ld c, 99
 	ld b,MIRROR
 	call GiveItem ; mirror
 	ld b,SNOWGLOBE
 	call GiveItem ; snowglobe
-	ld b,OCEAN_BERRY
-	call GiveItem ; ocean berry
-	ld b,GOLD_BERRY
-	call GiveItem ; gold berry
-	ld b,$28
+	ld b,RARE_CANDY
 	call GiveItem ; rare candy
-	ld b,$01
+	ld b,MASTER_BALL
 	call GiveItem ; masterball
-	ld b,$10
+	ld b,FULL_RESTORE
 	call GiveItem ; full restore
 	ld b,MAX_ELIXER
 	call GiveItem ; max elixir
@@ -32,16 +25,28 @@ start_items:
 	call GiveItem ; max revive
 	ld b,MAX_REPEL
 	call GiveItem ; max repel
+	ld b,FULL_HEAL
+	call GiveItem ; full heal
+	ld b,MAX_POTION
+	call GiveItem ; max potion
 
-	ld b, (ORAN_BERRY -1)
+	; berries
+	ld b, (MOUNTAIN_BERRY +1)
 	:
-	inc b
+	dec b
 	call GiveItem
 	ld a, b
-	cp ACAI_BERRY
-	jr c, :-
+	cp ORAN_BERRY
+	jr nz, :-
 
+; items you only need 1 of
 	ld c, 1
+	ld b,SURFBOARD
+	call GiveItem ; surfboard
+	ld b,TOWN_MAP
+	call GiveItem ; town map
+
+	; hm's
 	ld b, (HM_01 -1)
 	:
 	inc b
@@ -50,11 +55,6 @@ start_items:
 	cp HM_05
 	jr c, :-
 
-	ld b,SURFBOARD
-	call GiveItem ; surfboard
-	;ld b,TEST_ITEM
-	;call GiveItem ; test item
-.die
 	ret
 
 ;;;;;;;;;;;;;;;
@@ -63,14 +63,14 @@ start_items:
 skip_intro:
 	xor a
 	and a
-	jr nz, :+
+	jr nz, .noz
 	ld [wPlayerGender], a ; male
 	ld hl, StarterOT_Ninten ; name -> red=yin and blue=yang
 	ld de, wPlayerName
 	ld bc, NAME_LENGTH
 	call CopyData ; write player name
-	jr :++
-:
+	jr :+
+.noz
 	ld [wPlayerGender], a ; female
 	ld hl, StarterOT_Leaf ; name -> leaf
 	ld de, wPlayerName
@@ -85,7 +85,6 @@ skip_intro:
 	ld de, wRivalName
 	ld bc, NAME_LENGTH
 	call CopyData ; write rival name
-.die
 	ret
 
 IF DEF(_HARD)

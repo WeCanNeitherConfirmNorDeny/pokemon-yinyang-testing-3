@@ -287,11 +287,10 @@ PrintShinySymbol:
 
 PrintGenderStatusScreen: ; called on status screen
 	; get gender
-	ld de, wLoadedMonGender
-	callba GetMonGender
-	ld a, [wGenderTemp]
 	;ld de, wLoadedMonGender
-	;ld a, [de]
+	;callba GetMonGender
+	;ld a, [wGenderTemp]
+	ld a, [wLoadedMonGender]
 	and a
 	jr z, .noGender
 	dec a
@@ -381,14 +380,15 @@ StatusScreen2:
 	coord hl, 0, 8
 	ld b, 8
 	ld c, 18
-	call TextBoxBorder ; Draw move container
+	call TextBoxBorderless ; Draw move container
 	coord hl, 2, 9
 	ld de, wMovesString
 	call PlaceString ; Print moves
 	ld a, [wNumMovesMinusOne]
 	inc a
 	ld c, a
-	ld a, $4
+	;ld a, $4
+	ld a, NUM_MOVES
 	sub c
 	ld b, a ; Number of moves ?
 	coord hl, 11, 10
@@ -428,7 +428,7 @@ StatusScreen2:
 	ld bc, wPartyMon1PP - wPartyMon1Moves - 1
 	add hl, bc
 	ld a, [hl]
-	and $3f
+	and $3f ; hide modifier digits
 	ld [wStatusScreenCurrentPP], a
 	ld h, d
 	ld l, e
@@ -450,7 +450,8 @@ StatusScreen2:
 	pop bc
 	inc b
 	ld a, b
-	cp $4
+	;cp $4
+	cp NUM_MOVES
 	jr nz, .PrintPP
 .PPDone
 	coord hl, 9, 3
@@ -538,8 +539,8 @@ StatusScreen_ClearName:
 
 StatusScreen_PrintPP:
 ; print PP or -- c times, going down two rows each time
-	ld [hli], a
-	ld [hld], a
+	ld [hli], a ; P
+	ld [hld], a ; PP
 	add hl, de
 	dec c
 	jr nz, StatusScreen_PrintPP
